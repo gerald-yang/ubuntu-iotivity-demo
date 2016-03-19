@@ -1,0 +1,89 @@
+#******************************************************************
+#
+# Copyright 2014 Intel Mobile Communications GmbH All Rights Reserved.
+#
+#-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+##
+# Examples build script
+##
+Import('env')
+
+target_os = env.get('TARGET_OS')
+
+# Add third party libraries
+lib_env = env.Clone()
+SConscript(env.get('SRC_DIR') + '/resource/third_party_libs.scons', 'lib_env')
+
+demo_env = lib_env.Clone()
+src_dir = demo_env.get('SRC_DIR')
+
+######################################################################
+# Build flags
+######################################################################
+demo_env.AppendUnique(CPPPATH = [
+		src_dir + '/resource/include/',
+		src_dir + '/resource/csdk/stack/include',
+		src_dir + '/resource/c_common/ocrandom/include',
+		src_dir + '/resource/csdk/logger/include',
+		src_dir + '/resource/oc_logger/include'
+		])
+
+
+if target_os not in ['arduino', 'darwin', 'ios', 'android']:
+	env.AppendUnique(LIBS=['rt'])
+
+if target_os not in ['windows', 'winrt']:
+	demo_env.AppendUnique(CXXFLAGS = ['-std=c++0x', '-Wall', '-pthread'])
+	demo_env.AppendUnique(LIBS = ['-lcurl'])
+
+	# Note: 'pthread' is in libc for android. On other platform, if use
+	# new gcc(>4.9?) it isn't required, otherwise, it's required
+	if target_os != 'android':
+		demo_env.AppendUnique(LIBS = ['-lpthread'])
+
+demo_env.AppendUnique(LIBPATH = [env.get('BUILD_DIR')])
+demo_env.AppendUnique(RPATH = [env.get('BUILD_DIR')])
+demo_env.PrependUnique(LIBS = ['oc', 'octbstack', 'oc_logger', 'connectivity_abstraction', 'coap'])
+if env.get('SECURED') == '1':
+    demo_env.AppendUnique(LIBS = ['tinydtls'])
+
+if target_os == 'android':
+	demo_env.AppendUnique(CXXFLAGS = ['-frtti', '-fexceptions'])
+	ddmo_env.AppendUnique(LIBS = ['gnustl_shared'])
+
+	if not env.get('RELEASE'):
+		demo_env.AppendUnique(LIBS = ['log'])
+
+if target_os in ['darwin', 'ios']:
+	demo_env.AppendUnique(CPPDEFINES = ['_DARWIN_C_SOURCE'])
+
+######################################################################
+# Source files and Targets
+######################################################################
+nucdemo = demo_env.Program('nucdemo', ['nucdemo.cpp', 'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 
+'groveTempResource.cpp', 'ledResource.cpp', 'lcdResource.cpp', 'buttonResource.cpp'])
+
+Alias("demo", [nucdemo])
+env.AppendTarget('demo')
+
+svr_db_src_dir = src_dir + '/ubuntu-demo/'
+svr_db_build_dir = env.get('BUILD_DIR') + '/ubuntu-demo/'
+#demo_env.Alias("install", demo_env.Install( svr_db_build_dir,
+#                svr_db_src_dir + 'oic_svr_db_client.json'))
+#demo_env.Alias("install", demo_env.Install( svr_db_build_dir,
+#                svr_db_src_dir + 'oic_svr_db_server.json'))

@@ -1,0 +1,28 @@
+name: iotivity-nucdemo
+version: 1.0.1
+vendor: Gerald Yang <gerald.yang@canonical.com>
+architectures: [amd64]
+summary: An Iotivity demo for Intel NUC
+description: An Iotivity demo, discovers all NUC platforms with this snap package installed on local LAN, collects all NUC platforms CPU temperature and write to influxDB.
+icon: ./iotivity-nucdemo.png
+
+#binaries:
+#    start-demo:
+#        exec: start-demo
+#        caps:
+#            - network-client
+#            - network-service
+
+services:
+    start-demo:
+        start: start-demo
+        description: An Iotivity demo for Intel NUC
+        caps:
+            - network-client
+            - network-service
+
+parts:
+    server:
+        plugin: make
+        source: .
+
