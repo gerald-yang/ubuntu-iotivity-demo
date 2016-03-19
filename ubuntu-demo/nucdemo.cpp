@@ -1,4 +1,3 @@
-#SHIT
 //*************************************
 //
 // Demo project for Intel platform

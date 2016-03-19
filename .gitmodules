@@ -1,0 +1,3 @@
+[submodule "snappy/snapcraft"]
+	path = snappy/snapcraft
+	url = https://github.com/ubuntu-core/snapcraft.git
