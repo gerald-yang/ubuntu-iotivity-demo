@@ -1,6 +1,10 @@
+DEMOROOT=$(pwd)
+
 if [ -z "$IOTIVITY_ROOT" ]; then
-	IOTIVITY="iotivity-1.0.1"
+	IOTIVITY_VER="iotivity-1.0.1"
 fi
+
+IOTIVITY=$DEMOROOT/$IOTIVITY_VER
 
 print_usage() {
 	echo "Usage:"
@@ -50,11 +54,15 @@ else
 fi
 
 
+if ! [ -L $IOTIVITY/ubuntu-demo ]; then
+	echo "Make symlink to ubuntu-demo"
+	cd $IOTIVITY && ln -s ../ubuntu-demo ubuntu-demo
+fi
 
 if [ "$TARGET" == "all" ]; then
-	cd $IOTIVITY && ln -f -s ../ubuntu-demo ubuntu-demo && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux
+	cd $IOTIVITY && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux
 elif [ "$1" == "demo" ]; then
-	cd $IOTIVITY && ln -f -s ../ubuntu-demo ubuntu-demo && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux ubuntu-demo
+	cd $IOTIVITY && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux ubuntu-demo
 elif [ "$1" == "demo-snappy" ]; then
 	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/iotivity-nucdemo/lib/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/iotivity-nucdemo/
