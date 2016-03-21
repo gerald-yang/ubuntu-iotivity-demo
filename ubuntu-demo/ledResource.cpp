@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -13,13 +13,13 @@ void LedResource::put(OCRepresentation& recv_rep)
 	int temp;
 	recv_rep.getValue("status", temp);
 	if(temp < low || temp > high) {
-		cout << debug_info << "value " << temp << " is not valid" << endl;
+		cout << debugInfo << "value " << temp << " is not valid" << endl;
 		return;
 	}
 
 	status = temp;
 
-	cout << debug_info << "in PUT" << endl;
+	cout << debugInfo << "in PUT" << endl;
 	return;
 }
 
@@ -27,6 +27,6 @@ void LedResource::get()
 {
 	rep.setValue("status", status);
 
-	cout << debug_info << "in GET" << endl;
+	cout << debugInfo << "in GET" << endl;
 	return;
 }

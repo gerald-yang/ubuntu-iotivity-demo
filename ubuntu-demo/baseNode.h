@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -28,22 +28,37 @@ namespace PH = std::placeholders;
 class BaseNode
 {
 public:
-	BaseNode(string _requestName, string _requestUri);
+	BaseNode(string _requestName, ostringstream _requestUri);
 
 	void findResource();
+	bool found();
+
+	void put();
+	void get();
+
+	void virtual getDataFromRep(const OCRepresentation& rep) = 0;
+	void virtual putDataToRep() = 0;
 
 protected:
-	string requestUri;
+	ostringstream requestUri;
+	string requestName;
+	shared_ptr<OCResource> resourceHandle;
+	string hostAddress;
 
-	string debug_info;
+	string debugInfo;
 
-	FindCallback fcb;
-	foundResource(std::shared_ptr<OCResource> resource)
-
-	DiscoveredResourceMap discoveredResources;
-	shared_ptr<OCResource> resource;
 	mutex resourceLock;
-	mutex vectorLock;
+	FindCallback fcb;
+	// Callback handler on found resource
+	void foundResource(shared_ptr<OCResource> resource);
+
+	GetCallback gcb;
+	// Callback handler on GET request
+	void onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode);
+
+	PutCallback pcb;
+	// Callback handler on PUT request
+	void onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode);
 };
 
 #endif

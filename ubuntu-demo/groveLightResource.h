@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //

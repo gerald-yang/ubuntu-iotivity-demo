@@ -17,6 +17,7 @@ print_usage() {
 	echo "demo          build ubuntu-demo folder only (need to build the whole iotivity project first)"
 	echo "demo-snappy   copy binaries and libraries to snappy folder and build snap package"	
 	echo "              (need to build demo first)"
+	echo "clean         clean iotivity built files"
 	echo " "
 	echo "ARCH:"
 	echo "x86_64"
@@ -67,4 +68,6 @@ elif [ "$1" == "demo-snappy" ]; then
 	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/iotivity-nucdemo/lib/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/iotivity-nucdemo/
 	cd snappy/iotivity-nucdemo && snapcraft clean && snapcraft
+elif [ "$1" == "clean" ]; then
+	cd $IOTIVITY && scons -c TARGET_ARCH=$ARCH TARGET_OS=linux
 fi

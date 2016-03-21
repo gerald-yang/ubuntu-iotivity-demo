@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -23,7 +23,7 @@ void CpuTempResource::get()
 	temperature = stod(temp, NULL);
 	temperature = temperature / 1000;
 
-	cout << debug_info << "in GET" << endl;
+	cout << debugInfo << "in GET" << endl;
 	rep.setValue("URI", resourceUri);
 	rep.setValue("temperature", temperature);
 	return;

@@ -76,7 +76,7 @@ if target_os in ['darwin', 'ios']:
 # Source files and Targets
 ######################################################################
 nucdemo = demo_env.Program('nucdemo', ['nucdemo.cpp', 'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 
-'groveTempResource.cpp', 'ledResource.cpp', 'lcdResource.cpp', 'buttonResource.cpp'])
+'groveTempResource.cpp', 'ledResource.cpp', 'lcdResource.cpp', 'buttonResource.cpp', 'baseNode.cpp'])
 
 Alias("demo", [nucdemo])
 env.AppendTarget('demo')

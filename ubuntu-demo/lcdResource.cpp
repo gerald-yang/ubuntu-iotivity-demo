@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -13,7 +13,7 @@ void LcdResource::put(OCRepresentation& recv_rep)
 	recv_rep.getValue("str", str);
 
 
-	cout << debug_info << "in PUT" << endl;
+	cout << debugInfo << "in PUT" << endl;
 	return;
 }
 
@@ -21,6 +21,6 @@ void LcdResource::get()
 {
 	rep.setValue("str", str);
 
-	cout << debug_info << "in GET" << endl;
+	cout << debugInfo << "in GET" << endl;
 	return;
 }

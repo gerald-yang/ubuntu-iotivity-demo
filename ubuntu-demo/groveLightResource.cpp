@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -13,7 +13,7 @@ void GroveLightResource::get()
 {
 	light = 0;
 
-	cout << debug_info << "in GET" << endl;
+	cout << debugInfo << "in GET" << endl;
 	rep.setValue("light", light);
 	return;
 }

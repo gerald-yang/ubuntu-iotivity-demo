@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -41,7 +41,7 @@ protected:
 	string resourceUri;
 	string resourceTypeName;
 
-	string debug_info;
+	string debugInfo;
 
 	bool isSecure;
 

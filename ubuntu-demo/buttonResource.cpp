@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -10,7 +10,7 @@
 
 void ButtonResource::get()
 {
-	cout << debug_info << "in GET" << endl;
+	cout << debugInfo << "in GET" << endl;
 	rep.setValue("status", status);
 	return;
 }

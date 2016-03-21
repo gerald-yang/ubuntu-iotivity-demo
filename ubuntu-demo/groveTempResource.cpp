@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -11,7 +11,7 @@
 
 void GroveTempResource::get()
 {
-	cout << debug_info << "in GET" << endl;
+	cout << debugInfo << "in GET" << endl;
 	rep.setValue("URI", resourceUri);
 	rep.setValue("temperature", temperature);
 	return;

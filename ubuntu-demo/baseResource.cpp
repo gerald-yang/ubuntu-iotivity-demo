@@ -1,6 +1,6 @@
 //******************************************************************
 // 
-// Demo project for Intel platform
+// Demo project for Ubuntu Core
 //
 // Author: Gerald Yang
 //
@@ -20,7 +20,7 @@ BaseResource::BaseResource(string _uniqueID, string _resourceName, string _resou
 
 	rep.setUri(resourceUri.c_str());
 
-	debug_info = resourceName + "> ";
+	debugInfo = resourceName + "> ";
 }
 
 void BaseResource::createResource()
@@ -32,7 +32,7 @@ void BaseResource::createResource()
 	} else {
 		resourceProperty = OC_DISCOVERABLE | OC_OBSERVABLE;
 	}
-        cb = std::bind(&BaseResource::entityHandler, this,PH::_1);
+        cb = bind(&BaseResource::entityHandler, this, PH::_1);
 
 	// This will internally create and register the resource.
 	OCStackResult result = OCPlatform::registerResource(
@@ -40,13 +40,13 @@ void BaseResource::createResource()
 		DEFAULT_INTERFACE, cb, resourceProperty);
 
 	if (OC_STACK_OK != result) {
-		cout << debug_info << "Resource creation was unsuccessful" << endl;
+		cout << debugInfo << "Resource creation was unsuccessful" << endl;
 	}
 }
 
-OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequest> request)
+OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> request)
 {
-	cout << debug_info << "in entityHandler" << endl;
+	cout << debugInfo << "in entityHandler" << endl;
 	OCEntityHandlerResult ehResult = OC_EH_ERROR;
 
 	if(request) {
@@ -55,8 +55,8 @@ OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequ
 		int requestFlag = request->getRequestHandlerFlag();
 
 		if(requestFlag & RequestHandlerFlag::RequestFlag) {
-			cout << debug_info << "requestFlag : Request" << endl;
-			auto pResponse = std::make_shared<OC::OCResourceResponse>();
+			cout << debugInfo << "requestFlag : Request" << endl;
+			auto pResponse = make_shared<OC::OCResourceResponse>();
 			pResponse->setRequestHandle(request->getRequestHandle());
 			pResponse->setResourceHandle(request->getResourceHandle());
 
@@ -64,14 +64,14 @@ OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequ
 			QueryParamsMap queries = request->getQueryParameters();
 
 			if (!queries.empty()) {
-				cout << debug_info << "Query processing upto entityHandler" << endl;
+				cout << debugInfo << "Query processing upto entityHandler" << endl;
 			}
 			for (auto it : queries) {
-				cout << debug_info << "Query key: " << it.first << " value : " << it.second << endl;
+				cout << debugInfo << "Query key: " << it.first << " value : " << it.second << endl;
 			}
 
 			if(requestType == "GET") {
-				cout << debug_info << "requestType : GET" << endl;
+				cout << debugInfo << "requestType : GET" << endl;
 				get();
 				pResponse->setErrorCode(200);
 				pResponse->setResponseResult(OC_EH_OK);
@@ -80,7 +80,7 @@ OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequ
 					ehResult = OC_EH_OK;
 				}
 			} else if(requestType == "PUT") {
-				cout << debug_info << "requestType : PUT" << endl;
+				cout << debugInfo << "requestType : PUT" << endl;
 				OCRepresentation rep = request->getResourceRepresentation();
 
 				put(rep);
@@ -92,10 +92,10 @@ OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequ
 					ehResult = OC_EH_OK;
 				}
 			} else if(requestType == "POST") {
-				cout << debug_info << "requestType : POST" << endl;
-				cout << debug_info << "unsupported requestType" << endl;
+				cout << debugInfo << "requestType : POST" << endl;
+				cout << debugInfo << "unsupported requestType" << endl;
 			} else if(requestType == "DELETE") {
-				cout << debug_info << "Delete request received" << endl;
+				cout << debugInfo << "Delete request received" << endl;
 			}
 		}
 
@@ -109,7 +109,7 @@ OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequ
 			}
 			else if(ObserveAction::ObserveUnregister == observationInfo.action)
 			{
-				m_interestedObservers.erase(std::remove(
+				m_interestedObservers.erase(remove(
 					m_interestedObservers.begin(),
 					m_interestedObservers.end(),
 					observationInfo.obsId),
@@ -133,7 +133,7 @@ OCEntityHandlerResult BaseResource::entityHandler(std::shared_ptr<OCResourceRequ
 		}
 #endif
 	} else {
-		cout << debug_info << "Request invalid" << endl;
+		cout << debugInfo << "Request invalid" << endl;
 	}
 
 	return ehResult;
