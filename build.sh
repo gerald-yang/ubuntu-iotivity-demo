@@ -49,7 +49,7 @@ else
 fi
 
 if [ -z "$3" ]; then
-	CORE=1
+	CORE=4
 else
 	CORE=$3
 fi

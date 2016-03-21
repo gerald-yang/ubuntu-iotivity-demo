@@ -33,11 +33,15 @@ public:
 	void findResource();
 	bool found();
 
-	void put();
 	void get();
+	void put();
 
-	void virtual getDataFromRep(const OCRepresentation& rep) = 0;
-	void virtual putDataToRep() = 0;
+	bool virtual getEnable() = 0;
+	bool virtual putEnable() = 0;
+
+	void virtual getDataFromRep(const OCRepresentation& rep);
+	void virtual putDataToRep(OCRepresentation& rep);
+	void virtual onPutCheck(OCRepresentation rep);
 
 protected:
 	ostringstream requestUri;

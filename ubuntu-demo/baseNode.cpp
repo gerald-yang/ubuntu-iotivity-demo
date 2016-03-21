@@ -35,6 +35,41 @@ void BaseNode::findResource()
 	OCPlatform::findResource("", requestUri.str(), CT_DEFAULT, fcb);
 }
 
+void BaseNode::get()
+{
+	if(getEnable()) {
+		cout << debugInfo << "send GET request" << endl;
+		QueryParamsMap test;
+		resourceHandle->get(test, gcb);
+	} else {
+		cout << debugInfo << "not support GET reqeust" << endl;
+	}
+}
+
+void BaseNode::put()
+{
+	if(putEnable()) {
+		cout << debugInfo << "send PUT request" << endl;
+		OCRepresentation rep;
+		putDataToRep(rep);
+		resourceHandle->put(rep, QueryParamsMap(), pcb);
+	} else {
+		cout << debugInfo << "not support PUT request" << endl;
+	}
+}
+
+void BaseNode::getDataFromRep(const OCRepresentation& rep)
+{
+}
+
+void BaseNode::putDataToRep(OCRepresentation& rep)
+{
+}
+
+void BaseNode::onPutCheck(OCRepresentation rep)
+{
+}
+
 // Callback to found resources
 void BaseNode::foundResource(shared_ptr<OCResource> resource)
 {
@@ -61,6 +96,7 @@ void BaseNode::foundResource(shared_ptr<OCResource> resource)
 	}
 }
 
+// Callback to GET request
 void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode)
 {
 	try {
@@ -76,11 +112,13 @@ void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 	}
 }
 
+// Callback after PUT done
 void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode)
 {
 	try {
 		if(eCode == OC_STACK_OK) {
 			cout << debugInfo << "PUT request was successful" << endl;
+			onPutCheck(rep);
 		} else {
 			cout << debugInfo << "onPut Response error: " << eCode << endl;
 			exit(-1);
