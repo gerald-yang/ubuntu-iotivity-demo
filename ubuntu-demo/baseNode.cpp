@@ -9,9 +9,9 @@
 #include "baseNode.h"
 
 
-BaseNode::BaseNode(string _requestName, ostringstream _requestUri)
+BaseNode::BaseNode(string _requestName, string _requestUri)
 {
-	requestUri << OC_RSRVD_WELL_KNOWN_URI << "?rt=" << _requestUri.str();
+	requestUri << OC_RSRVD_WELL_KNOWN_URI << "?rt=" << _requestUri;
 	requestName = _requestName;
 	resourceHandle = NULL;
 

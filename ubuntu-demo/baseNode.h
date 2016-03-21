@@ -28,7 +28,7 @@ namespace PH = std::placeholders;
 class BaseNode
 {
 public:
-	BaseNode(string _requestName, ostringstream _requestUri);
+	BaseNode(string _requestName, string _requestUri);
 
 	void findResource();
 	bool found();
