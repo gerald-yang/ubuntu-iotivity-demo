@@ -16,8 +16,6 @@
 #include <mutex>
 #include <condition_variable>
 
-#include <pthread.h>
-
 #include "OCPlatform.h"
 #include "OCApi.h"
 

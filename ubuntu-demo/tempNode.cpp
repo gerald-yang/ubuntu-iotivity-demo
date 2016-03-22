@@ -6,19 +6,9 @@
 //
 //******************************************************************
 
-#include "groveTempNode.h"
+#include "tempNode.h"
 
-bool GroveTempNode::getEnable()
-{
-	return true;
-}
-
-bool GroveTempNode::putEnable()
-{
-	return false;
-}
-
-void GroveTempNode::getDataFromRep(const OCRepresentation& rep)
+void TempNode::getDataFromRep(const OCRepresentation& rep)
 {
 	rep.getValue("temperature", temperature);
 }

@@ -6,24 +6,22 @@
 //
 //******************************************************************
 
-#ifndef GROVETEMPNODE_H
-#define GROVETEMPNODE_H
+#ifndef SENSORNODE_H
+#define SENSORNODE_H
 
 #include "baseNode.h"
 
-class GroveTempNode : public BaseNode
+class SensorNode : public BaseNode
 {
 public:
-	GroveTempNode(string _requestName, string _requestUri) 
+	SensorNode(string _requestName, string _requestUri) 
 		: BaseNode(_requestName, _requestUri) 
 	{
-		temperature = 0.0;
 	};
 
 	bool getEnable();
 	bool putEnable();
-	void getDataFromRep(const OCRepresentation& rep);
-	double temperature;
+	virtual void getDataFromRep(const OCRepresentation& rep) = 0;
 };
 
 #endif
