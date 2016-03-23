@@ -33,7 +33,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include <curl/curl.h>
 #include <netdb.h>
 #include <ifaddrs.h>
 #include <string.h>
@@ -41,6 +40,7 @@
 #include "OCPlatform.h"
 #include "OCApi.h"
 
+using namespace std;
 using namespace OC;
 namespace PH = std::placeholders;
 
@@ -66,7 +66,6 @@ std::mutex observe_thread_lock;
 
 std::string my_ip;
 
-CURL *curl = NULL;
 
 class Demo
 {
@@ -1445,60 +1444,6 @@ void * button_observer (void *param) {
 	return NULL;
 }
 
-void sensor_write_db()
-{
-	CURLcode res;
-	std::string url;
-	std::string data;
-
-	url = "http://";
-	url += mydemo.influxdb_ip;
-	url += "/write?db=fukuoka";
-
-      
-	if(curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(curl, CURLOPT_POST, 1L);
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-		data = "temperature,sensor=1 value=";
-		data += std::to_string(mydemo.sensor_p_temp);
-
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-		res = curl_easy_perform(curl);
-		/* Check for errors */ 
-		if(res != CURLE_OK)
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			 
-		data = "humidity,sensor=1 value=";
-		data += std::to_string(mydemo.sensor_p_humidity);
-
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-		res = curl_easy_perform(curl);
-		/* Check for errors */ 
-		if(res != CURLE_OK)
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			 
-		data = "light,sensor=1 value=";
-		data += std::to_string(mydemo.sensor_p_light);
-
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-		res = curl_easy_perform(curl);
-		/* Check for errors */ 
-		if(res != CURLE_OK)
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			 
-		data = "sound,sensor=1 value=";
-		data += std::to_string(mydemo.sensor_p_sound);
-
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-		res = curl_easy_perform(curl);
-		/* Check for errors */ 
-		if(res != CURLE_OK)
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			 
-	}
-}
 
 void onObserveButtonP(const HeaderOptions /*headerOptions*/, const OCRepresentation& rep,
                     const int& eCode, const int& sequenceNumber)
@@ -2942,7 +2887,7 @@ void *socket_server_for_restful_api(void *)
 	return NULL;
 }
 	
-int wait_for_network(void)
+int wait_for_network(char *ifname)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int s;
@@ -2982,32 +2927,20 @@ int main(int argc, char* argv[])
 {
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
 
-	std::cout << "Start socket server for restful api" << std::endl;
-	pthread_t server_tid;
-	pthread_create(&server_tid, NULL, socket_server_for_restful_api, NULL);
+	if(argc != 2) {
+		printUsage();
+		return -(1);
+	}
 
-	if(wait_for_network()) {
-		std::cout << "Network is not available" << std::endl;
+	if(wait_for_network(argv[1])) {
+		cout << "Network interface " << argv[1] << " is not available" << endl;
 		return 1;
 	}
 	
-	if(argc >= 1) {
-		mydemo.influxdb_ip = argv[1];
-		std::cout << "Infruxdb_ip: " << mydemo.influxdb_ip << std::endl;
-		if(argc == 3 && argv[2][0] == '1')
-			mydemo.debug_mode = 1;
-	} else {
-		printUsage();
-		return 0;
-	}
-
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	/* get a curl handle */ 
-	curl = curl_easy_init();
-	if(!curl) {
-		std::cout << "Can not initiallize curl library" << std::endl;
-	}
+	mydemo.influxdb_ip = argv[2];
+	cout << "Infruxdb_ip: " << mydemo.influxdb_ip << endl;
+	if(argc == 3 && argv[2][0] == '1')
+		mydemo.debug_mode = 1;
 
 	std::cout << "Configuring ... ";
 	// Create PlatformConfig object
