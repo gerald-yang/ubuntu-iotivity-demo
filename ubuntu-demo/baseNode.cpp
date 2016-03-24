@@ -18,13 +18,23 @@ BaseNode::BaseNode(string _requestName, string _requestUri)
 	fcb = bind(&BaseNode::foundResource, this, PH::_1);
 	gcb = bind(&BaseNode::onGet, this, PH::_1, PH::_2, PH::_3);
 	pcb = bind(&BaseNode::onPut, this, PH::_1, PH::_2, PH::_3);
+	ocb = bind(&BaseNode::onObserve, this, PH::_1, PH::_2, PH::_3, PH::_4);
+	observe_type = ObserveType::Observe;
 
 	debugInfo = requestName + "> ";
 }
 
+void BaseNode::startFindResource()
+{
+	findThread = new thread(&BaseNode::findResource, this);
+}
+
 void BaseNode::findResource()
 {
-	OCPlatform::findResource("", requestUri.str(), CT_DEFAULT, fcb);
+	while(resourceHandle == NULL) {
+		OCPlatform::findResource("", requestUri.str(), CT_DEFAULT, fcb);
+		sleep(6);
+	}
 }
 
 bool BaseNode::found()
@@ -86,6 +96,17 @@ void BaseNode::put(bool wait)
 		}
 	} else {
 		cout << debugInfo << "not support PUT request" << endl;
+	}
+}
+
+void BaseNode::observe(bool enable)
+{
+	if(!found()) return;
+
+	if(enable) {
+		resourceHandle->observe(observe_type, QueryParamsMap(), ocb);
+	} else {
+		resourceHandle->cancelObserve();
 	}
 }
 
@@ -193,3 +214,7 @@ void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 	setPutDone(true);
 }
 
+void BaseNode::onObserve(const HeaderOptions /*headerOptions*/, const OCRepresentation& rep, 
+			const int& eCode, const int& sequenceNumber)
+{
+}

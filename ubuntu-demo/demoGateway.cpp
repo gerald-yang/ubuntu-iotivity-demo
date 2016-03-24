@@ -22,7 +22,7 @@
 //
 #include <string>
 #include <map>
-#include <cstdlib>
+//#include <cstdlib>
 #include <mutex>
 #include <list>
 #include <condition_variable>
@@ -35,7 +35,6 @@
 #include <errno.h>
 #include <netdb.h>
 #include <ifaddrs.h>
-#include <string.h>
 
 #include "OCPlatform.h"
 #include "OCApi.h"
@@ -44,6 +43,7 @@
 #include "rpiSensorNode.h"
 #include "ledNode.h"
 #include "lcdNode.h"
+#include "ultrasonicNode.h"
 
 using namespace std;
 using namespace OC;
@@ -488,11 +488,8 @@ int main(int argc, char* argv[])
 {
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
 	string host_ip;
-	string display_ip;
 
-	cout << to_string(argc) << endl;
-
-	if(argc != 5) {
+	if(argc != 4) {
 		printUsage();
 		return -(1);
 	}
@@ -511,13 +508,14 @@ int main(int argc, char* argv[])
 	InfluxDB db(argv[2]);
 
 	// Display host IPv4 address on LCD panel
-	display_ip = argv[3];
+	cout << "IP: " << host_ip << endl;
 
 	// Enable deubg menu
-	if(argv[4][0] == '1')
+	if(argv[3][0] == '1')
 		debug_mode = 1;
 	else
 		debug_mode = 0;
+
 
 	// Create PlatformConfig object
 	cout << "Configuring ... ";
@@ -538,32 +536,30 @@ int main(int argc, char* argv[])
 	RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
 	LedNode led("RPI2 LEDs", "grovepi.led");
 	LcdNode lcd("RPI2 LCD", "grovepi.lcd");
+	UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
+
+	rpiSensor.startFindResource();
+	led.startFindResource();
+	lcd.startFindResource();
+	ultrasonic.startFindResource();
+
+	lcd.lcd = host_ip;
 
 
-	rpiSensor.findResource();
-	led.findResource();
-	lcd.findResource();
-
-	lcd.lcd = display_ip;
-	lcd.put(true);
-
-	led.red = 0;
-	led.green = 0;
-	led.blue = 0;
-	led.put(true);
-
-
+	// List of rules
 	list<void (*)()> ruleList;
 	list<void (*)()>::iterator ruleListIter;
 
 	ruleList.push_back(&rule1);
 	ruleList.push_back(&rule2);
 
+
+	// Main loop
 	while(true) {
 		if(debug_mode) {
-			cout << "read sensors" << endl;
 			if(rpiSensor.found()) {
 				rpiSensor.get(true);
+				ultrasonic.get(true);
 				sleep(1);
 			}
 			//print_menu();

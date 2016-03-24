@@ -30,11 +30,12 @@ class BaseNode
 public:
 	BaseNode(string _requestName, string _requestUri);
 
-	void findResource();
+	void startFindResource();
 	bool found();
 
 	void get(bool wait);
 	void put(bool wait);
+	void observe(bool enable);
 
 	bool virtual getEnable() = 0;
 	bool virtual putEnable() = 0;
@@ -51,6 +52,8 @@ protected:
 
 	string debugInfo;
 
+	thread *findThread;
+	void findResource();
 	mutex resourceLock;
 	FindCallback fcb;
 	// Callback handler on found resource
@@ -71,6 +74,11 @@ protected:
 	PutCallback pcb;
 	// Callback handler on PUT request
 	void onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode);
+
+	ObserveCallback ocb;
+	void onObserve(const HeaderOptions /*headerOptions*/, const OCRepresentation& rep, 
+			const int& eCode, const int& sequenceNumber);
+	ObserveType observe_type;
 };
 
 #endif
