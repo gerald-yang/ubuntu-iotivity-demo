@@ -38,6 +38,12 @@ bool BaseNode::found()
 void BaseNode::get(bool wait)
 {
 	if(getEnable()) {
+		if(wait) {
+			while(!found());
+		} else {
+			if(!found()) return;
+		}
+
 		cout << debugInfo << "send GET request" << endl;
 		QueryParamsMap test;
 
@@ -59,6 +65,12 @@ void BaseNode::get(bool wait)
 void BaseNode::put(bool wait)
 {
 	if(putEnable()) {
+		if(wait) {
+			while(!found());
+		} else {
+			if(!found()) return;
+		}
+
 		cout << debugInfo << "send PUT request" << endl;
 		OCRepresentation rep;
 		putDataToRep(rep);
@@ -155,7 +167,6 @@ void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 			getDataFromRep(rep);
 		} else {
 			cout << "onGET Response error: " << eCode << endl;
-			exit(-1);
 		}
 	} catch(exception& e) {
 		cout << "Exception: " << e.what() << " in onGet" << endl;
@@ -173,11 +184,12 @@ void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 			onPutCheck(rep);
 		} else {
 			cout << debugInfo << "onPut Response error: " << eCode << endl;
-			exit(-1);
 		}
 	}
 	catch(exception& e) {
 		cout << debugInfo << "Exception: " << e.what() << " in onPut" << endl;
 	}
+
+	setPutDone(true);
 }
 

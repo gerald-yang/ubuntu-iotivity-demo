@@ -42,6 +42,8 @@
 
 #include "influxDB.h"
 #include "rpiSensorNode.h"
+#include "ledNode.h"
+#include "lcdNode.h"
 
 using namespace std;
 using namespace OC;
@@ -534,7 +536,22 @@ int main(int argc, char* argv[])
 
 	std::cout << "Start client" << std::endl;
 	RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
+	LedNode led("RPI2 LEDs", "grovepi.led");
+	LcdNode lcd("RPI2 LCD", "grovepi.lcd");
+
+
 	rpiSensor.findResource();
+	led.findResource();
+	lcd.findResource();
+
+	lcd.lcd = display_ip;
+	lcd.put(true);
+
+	led.red = 0;
+	led.green = 0;
+	led.blue = 0;
+	led.put(true);
+
 
 	list<void (*)()> ruleList;
 	list<void (*)()>::iterator ruleListIter;
@@ -544,6 +561,7 @@ int main(int argc, char* argv[])
 
 	while(true) {
 		if(debug_mode) {
+			cout << "read sensors" << endl;
 			if(rpiSensor.found()) {
 				rpiSensor.get(true);
 				sleep(1);
