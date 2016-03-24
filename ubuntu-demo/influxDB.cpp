@@ -21,19 +21,40 @@ InfluxDB::InfluxDB(string _address)
 	if(!curl) {
 		cout << debugInfo << "Can not initiallize curl library" << endl;
 	}
+
+	writeThread = new thread(&InfluxDB::writeDataThread, this);
+}
+
+InfluxDB::~InfluxDB()
+{
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
+
+	delete writeThread;
 }
 
 void InfluxDB::writeDB(string db, string name, double value)
 {
-	_writeDB(db, name, to_string(value));
+	pushDB(db, name, to_string(value));
 }
 
 void InfluxDB::writeDB(string db, string name, int value)
 {
-	_writeDB(db, name, to_string(value));
+	pushDB(db, name, to_string(value));
 }
 
-void InfluxDB::_writeDB(string db, string name, string value)
+void InfluxDB::pushDB(string db, string name, string value)
+{
+	struct writeData data;
+	data.db = db;
+	data.name = name;
+	data.value = value;
+
+	lock_guard<mutex> lock(queueLock);
+	writeQueue.push(data);
+}
+
+void InfluxDB::curlWriteDB(string db, string name, string value)
 {
 	CURLcode res;
 	string url;
@@ -60,6 +81,23 @@ void InfluxDB::_writeDB(string db, string name, string value)
 			cout << debugInfo << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
 	} else {
 		cout << debugInfo << "curl library unavailable" << endl;
+	}
+}
+
+void InfluxDB::writeDataThread()
+{
+	while(true) {
+		if(!writeQueue.empty()) {
+			struct writeData data;
+
+			queueLock.lock();
+			data = writeQueue.front();
+			curlWriteDB(data.db, data.name, data.value);
+			writeQueue.pop();
+			queueLock.unlock();
+		}
+
+		this_thread::sleep_for(chrono::milliseconds(100));
 	}
 }
 

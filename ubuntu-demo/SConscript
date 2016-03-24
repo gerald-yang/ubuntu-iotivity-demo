@@ -75,11 +75,12 @@ if target_os in ['darwin', 'ios']:
 ######################################################################
 # Source files and Targets
 ######################################################################
-nucdemo = demo_env.Program('nucdemo', ['nucdemo.cpp', 'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 
-'groveTempResource.cpp', 'ledResource.cpp', 'lcdResource.cpp', 'buttonResource.cpp', 'baseNode.cpp', 'sensorNode.cpp',
-'tempNode.cpp', 'humidityNode.cpp', 'lightNode.cpp', 'soundNode.cpp', 'influxDB.cpp'])
+demogateway = demo_env.Program('demogateway', ['demoGateway.cpp', 
+'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'groveTempResource.cpp', 'ledResource.cpp', 
+'lcdResource.cpp', 'buttonResource.cpp', 'baseNode.cpp', 'sensorNode.cpp', 'tempNode.cpp', 'humidityNode.cpp', 
+'lightNode.cpp', 'soundNode.cpp', 'rpiSensorNode.cpp', 'influxDB.cpp'])
 
-Alias("demo", [nucdemo])
+Alias("demo", [demogateway])
 env.AppendTarget('demo')
 
 svr_db_src_dir = src_dir + '/ubuntu-demo/'

@@ -6,13 +6,17 @@
 //
 //******************************************************************
 
-#ifndef BASENODE_H
-#define BASENODE_H
+#ifndef INFLUXDB_H
+#define INFLUXDB_H
 
 
 #include <iostream>
-#include <list>
+#include <queue>
 #include <mutex>
+#include <thread>
+#include <chrono>
+
+#include <unistd.h>
 
 #include <curl/curl.h>
 
@@ -22,24 +26,29 @@ class InfluxDB
 {
 public:
 	InfluxDB(string _address);
+	~InfluxDB();
 	void writeDB(string db, string name, double value);
 	void writeDB(string db, string name, int value);
 
 protected:
 	string address;
 	CURL *curl;
-	mutex vectorLock;
-	list<struct writeData> writeList;
+
 	struct writeData {
 		string db;
 		string name;
 		string value;
 	};
 
+	mutex queueLock;
+	queue<struct writeData> writeQueue;
 
 	string debugInfo;
 
-	void _writeDB(string db, string name, string value);
+	void pushDB(string db, string name, string value);
+	void curlWriteDB(string db, string name, string value);
+	thread *writeThread;
+	void writeDataThread();
 };
 
 #endif

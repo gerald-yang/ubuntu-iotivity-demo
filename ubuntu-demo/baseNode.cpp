@@ -22,6 +22,11 @@ BaseNode::BaseNode(string _requestName, string _requestUri)
 	debugInfo = requestName + "> ";
 }
 
+void BaseNode::findResource()
+{
+	OCPlatform::findResource("", requestUri.str(), CT_DEFAULT, fcb);
+}
+
 bool BaseNode::found()
 {
 	if(resourceHandle)
@@ -30,31 +35,73 @@ bool BaseNode::found()
 		return false;
 }
 
-void BaseNode::findResource()
-{
-	OCPlatform::findResource("", requestUri.str(), CT_DEFAULT, fcb);
-}
-
-void BaseNode::get()
+void BaseNode::get(bool wait)
 {
 	if(getEnable()) {
 		cout << debugInfo << "send GET request" << endl;
 		QueryParamsMap test;
+
+		if(wait) {
+			setGetDone(false);
+		}
+
 		resourceHandle->get(test, gcb);
+
+		if(wait) {
+			getGetDone(true);
+		}
+
 	} else {
 		cout << debugInfo << "not support GET reqeust" << endl;
 	}
 }
 
-void BaseNode::put()
+void BaseNode::put(bool wait)
 {
 	if(putEnable()) {
 		cout << debugInfo << "send PUT request" << endl;
 		OCRepresentation rep;
 		putDataToRep(rep);
+
+		if(wait) {
+			setPutDone(false);
+		}
+
 		resourceHandle->put(rep, QueryParamsMap(), pcb);
+
+		if(wait) {
+			getPutDone(true);
+		}
 	} else {
 		cout << debugInfo << "not support PUT request" << endl;
+	}
+}
+
+void BaseNode::setGetDone(bool status)
+{
+	getLock.lock();
+	getDone = status;
+	getLock.unlock();
+}
+
+void BaseNode::getGetDone(bool status)
+{
+	while(getDone != status) {
+		this_thread::sleep_for(chrono::milliseconds(50));
+	}
+}
+
+void BaseNode::setPutDone(bool status)
+{
+	putLock.lock();
+	putDone = status;
+	putLock.unlock();
+}
+
+void BaseNode::getPutDone(bool status)
+{
+	while(putDone != status) {
+		this_thread::sleep_for(chrono::milliseconds(50));
 	}
 }
 
@@ -86,9 +133,12 @@ void BaseNode::foundResource(shared_ptr<OCResource> resource)
 					", need to create a new resource node for it" << endl;
 			}
 		} else {
-			cout << "Found resource " << resource->uniqueIdentifier() <<
-				" for the first time on server with ID: " << resource->sid() << endl;
 			resourceHandle = resource;
+			hostAddress = resourceHandle->host();
+
+			cout << debugInfo << "Found resource " << resource->uniqueIdentifier();
+			cout << " from " << hostAddress << endl;
+			cout << debugInfo << "for the first time on server with ID: " << resource->sid() << endl;
 		}
 
 	} catch(exception& e) {
@@ -110,6 +160,8 @@ void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 	} catch(exception& e) {
 		cout << "Exception: " << e.what() << " in onGet" << endl;
 	}
+
+	setGetDone(true);
 }
 
 // Callback after PUT done

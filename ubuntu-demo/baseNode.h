@@ -14,6 +14,8 @@
 #include <iostream>
 #include <fstream>
 #include <mutex>
+#include <thread>
+#include <chrono>
 #include <condition_variable>
 
 #include "OCPlatform.h"
@@ -31,8 +33,8 @@ public:
 	void findResource();
 	bool found();
 
-	void get();
-	void put();
+	void get(bool wait);
+	void put(bool wait);
 
 	bool virtual getEnable() = 0;
 	bool virtual putEnable() = 0;
@@ -54,10 +56,18 @@ protected:
 	// Callback handler on found resource
 	void foundResource(shared_ptr<OCResource> resource);
 
+	mutex getLock;
+	bool getDone;
+	void setGetDone(bool status);
+	void getGetDone(bool status);
 	GetCallback gcb;
 	// Callback handler on GET request
 	void onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode);
 
+	mutex putLock;
+	bool putDone;
+	void setPutDone(bool status);
+	void getPutDone(bool status);
 	PutCallback pcb;
 	// Callback handler on PUT request
 	void onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode);
