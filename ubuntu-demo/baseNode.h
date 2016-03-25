@@ -29,6 +29,7 @@ class BaseNode
 {
 public:
 	BaseNode(string _requestName, string _requestUri);
+	~BaseNode();
 
 	void startFindResource();
 	bool found();

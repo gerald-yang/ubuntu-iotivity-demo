@@ -81,8 +81,14 @@ demogateway = demo_env.Program('demogateway', ['demoGateway.cpp',
 'lightNode.cpp', 'soundNode.cpp', 'rpiSensorNode.cpp', 'ledNode.cpp', 'lcdNode.cpp', 'buzzerNode.cpp', 
 'buttonNode.cpp', 'ultrasonicNode.cpp', 'influxDB.cpp'])
 
-Alias("demo", [demogateway])
-env.AppendTarget('demo')
+nucdemo = demo_env.Program('nucdemo', ['nucdemo.cpp', 
+'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'influxDB.cpp'])
+
+Alias("demogateway", [demogateway])
+env.AppendTarget('demogateway')
+
+Alias("nucdemo", [nucdemo])
+env.AppendTarget('nucdemo')
 
 svr_db_src_dir = src_dir + '/ubuntu-demo/'
 svr_db_build_dir = env.get('BUILD_DIR') + '/ubuntu-demo/'
