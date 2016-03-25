@@ -65,9 +65,12 @@ if [ "$TARGET" == "all" ]; then
 elif [ "$1" == "demo" ]; then
 	cd $IOTIVITY && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux ubuntu-demo
 elif [ "$1" == "demo-snappy" ]; then
-	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/iotivity-nucdemo/lib/
-	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/iotivity-nucdemo/
-	cd snappy/iotivity-nucdemo && snapcraft clean && snapcraft
+	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/nucdemo/lib/
+	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/nucdemo/
+	cd snappy/nucdemo && snapcraft clean && snapcraft
+	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snapp/demogateway/lib/
+	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway snappy/demogateway/
+	cd snappy/demogateway && snapcraft clean && snapcraft
 elif [ "$1" == "clean" ]; then
 	cd $IOTIVITY && scons -c TARGET_ARCH=$ARCH TARGET_OS=linux
 fi
