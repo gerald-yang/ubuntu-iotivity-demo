@@ -22,7 +22,7 @@ public:
 
 	bool getEnable();
 	bool putEnable();
-	void putDataToRep(OCRepresentation& rep);
+	void getDataFromRep(const OCRepresentation& rep);
 
 	int button;
 };

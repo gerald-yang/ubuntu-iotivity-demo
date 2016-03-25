@@ -44,6 +44,7 @@
 #include "ledNode.h"
 #include "lcdNode.h"
 #include "ultrasonicNode.h"
+#include "buttonNode.h"
 
 using namespace std;
 using namespace OC;
@@ -601,19 +602,22 @@ int main(int argc, char* argv[])
 	cout << "done" << endl;
 
 
-	std::cout << "Start client" << std::endl;
+	std::cout << "Starting client" << std::endl;
 	RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
 	LedNode led("RPI2 LEDs", "grovepi.led");
 	LcdNode lcd("RPI2 LCD", "grovepi.lcd");
 	UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
+	ButtonNode button("RPI2 button", "grovepi.button");
 
 	rpiSensor.startFindResource();
 	led.startFindResource();
 	lcd.startFindResource();
 	ultrasonic.startFindResource();
+	button.startFindResource();
 
 	lcd.lcd = host_ip;
 
+	button.observe(true, true);
 
 	// Main loop
 	while(true) {

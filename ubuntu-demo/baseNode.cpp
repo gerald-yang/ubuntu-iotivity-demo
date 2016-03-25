@@ -21,7 +21,18 @@ BaseNode::BaseNode(string _requestName, string _requestUri)
 	ocb = bind(&BaseNode::onObserve, this, PH::_1, PH::_2, PH::_3, PH::_4);
 	observe_type = ObserveType::Observe;
 
+	getDone = false;
+	putDone = false;
+	inObserve = false;
+
 	debugInfo = requestName + "> ";
+}
+
+BaseNode::~BaseNode()
+{
+	if(inObserve) {
+		resourceHandle->cancelObserve();
+	}
 }
 
 void BaseNode::startFindResource()
@@ -99,13 +110,17 @@ void BaseNode::put(bool wait)
 	}
 }
 
-void BaseNode::observe(bool enable)
+void BaseNode::observe(bool wait, bool enable)
 {
-	if(!found()) return;
-
-	if(enable) {
-		resourceHandle->observe(observe_type, QueryParamsMap(), ocb);
+	if(wait) {
+		while(!found());
 	} else {
+		if(!found()) return;
+	}
+
+	if(enable && !inObserve) {
+		resourceHandle->observe(observe_type, QueryParamsMap(), ocb);
+	} else if (!enable && inObserve) {
 		resourceHandle->cancelObserve();
 	}
 }
@@ -182,6 +197,8 @@ void BaseNode::foundResource(shared_ptr<OCResource> resource)
 // Callback to GET request
 void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode)
 {
+	cout << debugInfo << "onGet" << endl;
+
 	try {
 		if(eCode == OC_STACK_OK) {
 			cout << debugInfo << "GET request was successful" << endl;
@@ -199,6 +216,8 @@ void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 // Callback after PUT done
 void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode)
 {
+	cout << debugInfo << "onPut" << endl;
+
 	try {
 		if(eCode == OC_STACK_OK) {
 			cout << debugInfo << "PUT request was successful" << endl;
@@ -217,4 +236,32 @@ void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 void BaseNode::onObserve(const HeaderOptions /*headerOptions*/, const OCRepresentation& rep, 
 			const int& eCode, const int& sequenceNumber)
 {
+	cout << debugInfo << "onObserve" << endl;
+
+	try {
+		if(eCode == OC_STACK_OK && sequenceNumber != OC_OBSERVE_NO_OPTION) {
+			if(sequenceNumber == OC_OBSERVE_REGISTER) {
+				cout << debugInfo << "Observe registration action is successful" << endl;
+				inObserve = true;
+			} else if(sequenceNumber == OC_OBSERVE_DEREGISTER) {
+				cout << debugInfo << "Observe De-registration action is successful" << endl;
+				inObserve = false;
+			}
+
+			cout << debugInfo << "OBSERVE RESULT:"<< endl;
+			cout << debugInfo << "\tSequenceNumber: "<< sequenceNumber << endl;
+			getDataFromRep(rep);
+		} else {
+			if(sequenceNumber == OC_OBSERVE_NO_OPTION) {
+				cout << debugInfo << "Observe registration or de-registration action is failed" << endl;
+			} else {
+				cout << debugInfo << "onObserve response error: " << eCode << endl;
+			}
+			inObserve = false;
+		}
+	}
+	catch(exception& e) {
+		cout << debugInfo << "Exception: " << e.what() << " in onObserve" << endl;
+		inObserve = false;
+	}
 }

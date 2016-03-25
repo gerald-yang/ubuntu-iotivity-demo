@@ -10,15 +10,16 @@
 
 bool ButtonNode::getEnable()
 {
-	return false;
+	return true;
 }
 
 bool ButtonNode::putEnable()
 {
-	return true;
+	return false;
 }
 
-void ButtonNode::putDataToRep(OCRepresentation& rep)
+void ButtonNode::getDataFromRep(const OCRepresentation& rep)
 {
-	rep.setValue("button", button);
+	rep.getValue("button", button);
+	cout << debugInfo << to_string(button) << endl;
 }

@@ -35,7 +35,7 @@ public:
 
 	void get(bool wait);
 	void put(bool wait);
-	void observe(bool enable);
+	void observe(bool wait, bool enable);
 
 	bool virtual getEnable() = 0;
 	bool virtual putEnable() = 0;
@@ -75,6 +75,7 @@ protected:
 	// Callback handler on PUT request
 	void onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode);
 
+	bool inObserve;
 	ObserveCallback ocb;
 	void onObserve(const HeaderOptions /*headerOptions*/, const OCRepresentation& rep, 
 			const int& eCode, const int& sequenceNumber);
