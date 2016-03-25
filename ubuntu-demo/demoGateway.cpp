@@ -474,14 +474,83 @@ static FILE* client_open(const char* /*path*/, const char *mode)
 	return fopen("./oic_svr_db_client.json", mode);
 }
 
-void rule1()
+
+bool rule1_condition(RpiSensorNode& sensor, LedNode& led)
 {
-	cout << "rule 1" << endl;
+	if(sensor.found() && led.found())
+		return true;
+	else
+		return false;
 }
 
-void rule2()
+bool rule1_init_done = false;
+void rule1_init(RpiSensorNode& sensor, LedNode& led)
 {
-	cout << "rule 2" << endl;
+	if(sensor.temperature >= 25) {
+		led.red = 1;
+		led.green = 0;
+	} else {
+		led.red = 0;
+		led.green = 1;
+	}
+
+	led.put(false);
+}
+
+void rule1_loop(RpiSensorNode& sensor, LedNode& led)
+{
+	if(sensor.temperature >= 25 && (led.green == 1 || led.red == 0)) {
+		led.red = 1;
+		led.green = 0;
+		led.put(false);
+	} else if(sensor.temperature < 25 && (led.green == 0 || led.red == 1)) {
+		led.red = 0;
+		led.green = 1;
+		led.put(false);
+	}
+}
+
+bool rule2_condition(RpiSensorNode& sensor, LedNode& led)
+{
+	if(sensor.found() && led.found())
+		return true;
+	else
+		return false;
+}
+
+bool rule2_init_done = false;
+void rule2_init(RpiSensorNode& sensor, LedNode& led)
+{
+	if(sensor.light >= 500)
+		led.blue = 0;
+	else
+		led.blue = 1;
+
+	led.put(false);
+}
+
+void rule2_loop(RpiSensorNode& sensor, LedNode& led)
+{
+	if(sensor.light >= 500 && led.blue == 1) {
+		led.blue = 0;
+		led.put(false);
+	} else if(sensor.light < 500 && led.blue == 0) {
+		led.blue = 1;
+		led.put(false);
+	}
+}
+
+bool rule3_condition(RpiSensorNode& sensor)
+{
+	return sensor.found();
+}
+
+void rule3(RpiSensorNode& sensor, InfluxDB& db)
+{
+	db.writeDB("fukuoka", "temperature", sensor.temperature);
+	db.writeDB("fukuoka", "humidity", sensor.humidity);
+	db.writeDB("fukuoka", "light", sensor.light);
+	db.writeDB("fukuoka", "sound", sensor.sound);
 }
 
 int main(int argc, char* argv[])
@@ -546,14 +615,6 @@ int main(int argc, char* argv[])
 	lcd.lcd = host_ip;
 
 
-	// List of rules
-	list<void (*)()> ruleList;
-	list<void (*)()>::iterator ruleListIter;
-
-	ruleList.push_back(&rule1);
-	ruleList.push_back(&rule2);
-
-
 	// Main loop
 	while(true) {
 		if(debug_mode) {
@@ -564,9 +625,32 @@ int main(int argc, char* argv[])
 			}
 			//print_menu();
 		} else {
-			for(ruleListIter = ruleList.begin(); ruleListIter != ruleList.end(); ruleListIter++) {
-				(*ruleListIter)();
+			rpiSensor.get(false);
+			ultrasonic.get(false);
+
+			if(rule1_condition(rpiSensor, led)) {
+				if(rule1_init_done) {
+					rule1_loop(rpiSensor, led);
+				} else {
+					rule1_init(rpiSensor, led);
+					rule1_init_done = true;
+				}
 			}
+
+			if(rule2_condition(rpiSensor, led)) {
+				if(rule2_init_done) {
+					rule2_loop(rpiSensor, led);
+				} else {
+					rule2_init(rpiSensor, led);
+					rule2_init_done = true;
+				}
+			}
+
+			if(rule3_condition(rpiSensor)) {
+				rule3(rpiSensor, db);
+			}
+
+			sleep(1);
 		}
 	}
 
