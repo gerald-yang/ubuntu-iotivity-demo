@@ -602,15 +602,20 @@ int main(int argc, char* argv[])
 	button.observe(true, true);
 
 	// Main loop
-	while(true) {
-		if(debug_mode) {
+	if(debug_mode) {
+		cout << "Enter debug mode" << endl;
+
+		while(true) {
 			if(rpiSensor.found()) {
 				rpiSensor.get(true);
 				ultrasonic.get(true);
 				sleep(1);
 			}
-			//print_menu();
-		} else {
+		}
+	} else {
+		cout << "Run all rules" << endl;
+
+		while(true) {
 			rpiSensor.get(false);
 			ultrasonic.get(false);
 
