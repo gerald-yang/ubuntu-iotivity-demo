@@ -1,9 +1,7 @@
 all:
 
 install:
-	mkdir -p $(DESTDIR)/bin
-	cp -a start-demo.sh $(DESTDIR)/bin/start-demo
-	cp -a demogateway $(DESTDIR)/bin
+	cp -a start-demo.sh $(DESTDIR)/start-demo
+	cp -ra magic-bin $(DESTDIR)/
 	cp -ra lib $(DESTDIR)/
-	chmod a+x $(DESTDIR)/bin/start-demo
-	chmod a+x $(DESTDIR)/bin/demogateway
+	chmod a+x $(DESTDIR)/start-demo

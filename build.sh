@@ -40,8 +40,10 @@ fi
 
 if [ -z "$2" ] || [ "$2" == "x86_64" ] ; then
 	ARCH="x86_64"
+	MAGIC_BIN="x86_64-linux-gnu"
 elif [ "$2" == "armeabi-v7a-hard" ]; then
 	ARCH=$2
+	MAGIC_BIN="arm-linux-gnueabihf"
 else
 	echo "Unknown architecture $2"
 	print_usage
@@ -54,6 +56,11 @@ else
 	CORE=$3
 fi
 
+if [ -z "$4" ]; then
+	SNAPCRAFT=$4
+else
+	SNAPCRAFT="snapcraft"
+fi
 
 if ! [ -L $IOTIVITY/ubuntu-demo ]; then
 	echo "Make symlink to ubuntu-demo"
@@ -67,10 +74,10 @@ elif [ "$1" == "demo" ]; then
 elif [ "$1" == "demo-snappy" ]; then
 	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/nucdemo/lib/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/nucdemo/
-	cd snappy/nucdemo && snapcraft clean && snapcraft
-	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/demogateway/lib/
-	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway snappy/demogateway/
-	cd snappy/demogateway && snapcraft clean && snapcraft
+	cd snappy/nucdemo && $SNAPCRAFT clean && $SNAPCRAFT
+	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/demogateway/lib/$MAGIC_BIN/
+	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway snappy/demogateway/magic-bin/$MAGIC_BIN/
+	cd snappy/demogateway && $SNAPCRAFT clean && $SNAPCRAFT
 elif [ "$1" == "clean" ]; then
 	cd $IOTIVITY && scons -c TARGET_ARCH=$ARCH TARGET_OS=linux
 fi

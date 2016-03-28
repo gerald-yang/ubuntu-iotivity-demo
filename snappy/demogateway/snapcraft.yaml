@@ -1,9 +1,9 @@
-name: iotivity-demogateway
-version: 1.1.0
+name: demo-iotivity-gateway
+version: 1.0.4
 vendor: Gerald Yang <gerald.yang@canonical.com>
-architectures: [amd64]
-summary: An Iotivity demo gateway
-description: An Iotivity demo gateway, discovers all known resources on local LAN, collects all sensor data and provides some rules.
+architectures: [amd64, armhf]
+summary: An Iotivity demo gateway displays and controls sensors and devices
+description: An Iotivity demo gateway, discovers Arduino and Raspberry Pi 2 Iotivity servers and provides access and control to all resources on servers.
 icon: ./iotivity.png
 
 #binaries:
@@ -12,14 +12,20 @@ icon: ./iotivity.png
 #        caps:
 #            - network-client
 #            - network-service
+#        security-policy:
+#            apparmor: democlient.apparmor
+#            seccomp: democlient.seccomp
 
 services:
     start-demo:
         start: start-demo
-        description: An Iotivity demo gateway
+        description: An Iotivity client/server for demo
         caps:
             - network-client
             - network-service
+#        security-policy:
+#            apparmor: democlient.apparmor
+#            seccomp: democlient.seccomp
 
 parts:
     server:
