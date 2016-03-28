@@ -30,6 +30,7 @@ public:
 	void writeDB(string db, string name, double value);
 	void writeDB(string db, string name, int value);
 
+	void debugPrint(initializer_list<string> list);
 protected:
 	string address;
 	CURL *curl;
@@ -43,6 +44,7 @@ protected:
 	mutex queueLock;
 	queue<struct writeData> writeQueue;
 
+	bool debugEnable;
 	string debugInfo;
 
 	void pushDB(string db, string name, string value);

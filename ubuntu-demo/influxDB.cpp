@@ -12,6 +12,7 @@
 InfluxDB::InfluxDB(string _address)
 {
 	address = _address;
+	debugEnable = true;
 	debugInfo = "influxDB> ";
 
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -19,7 +20,7 @@ InfluxDB::InfluxDB(string _address)
 	/* get a curl handle */ 
 	curl = curl_easy_init();
 	if(!curl) {
-		cout << debugInfo << "Can not initiallize curl library" << endl;
+		cout << debugInfo << "error: can not initiallize curl library" << endl;
 	}
 
 	writeThread = new thread(&InfluxDB::writeDataThread, this);
@@ -33,6 +34,16 @@ InfluxDB::~InfluxDB()
 	delete writeThread;
 }
 
+void InfluxDB::debugPrint(initializer_list<string> list)
+{
+	if(debugEnable) {
+		cout << debugInfo;
+		for(string str : list) {
+			cout << str;
+		}
+		cout << endl;
+	}
+}
 void InfluxDB::writeDB(string db, string name, double value)
 {
 	pushDB(db, name, to_string(value));
@@ -78,9 +89,9 @@ void InfluxDB::curlWriteDB(string db, string name, string value)
 		res = curl_easy_perform(curl);
 		/* Check for errors */ 
 		if(res != CURLE_OK)
-			cout << debugInfo << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
+			cout << debugInfo << "error: curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
 	} else {
-		cout << debugInfo << "curl library unavailable" << endl;
+		cout << debugInfo << "error: curl library unavailable" << endl;
 	}
 }
 

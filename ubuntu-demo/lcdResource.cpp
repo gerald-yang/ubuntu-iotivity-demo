@@ -19,8 +19,7 @@ void LcdResource::put(OCRepresentation& recv_rep)
 
 void LcdResource::get()
 {
+	debugPrint({"in GET"});
+	debugPrint({"string: ", str});
 	rep.setValue("str", str);
-
-	cout << debugInfo << "in GET" << endl;
-	return;
 }

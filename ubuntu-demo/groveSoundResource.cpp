@@ -11,8 +11,8 @@
 
 void GroveSoundResource::get()
 {
-	cout << debugInfo << "in GET" << endl;
+	debugPrint({"in GET"});
+	debugPrint({"sound: ", to_string(sound)});
 	rep.setValue("sound", sound);
-	return;
 }
 

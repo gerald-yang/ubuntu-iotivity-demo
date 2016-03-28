@@ -10,8 +10,8 @@
 
 void ButtonResource::get()
 {
-	cout << debugInfo << "in GET" << endl;
+	debugPrint({"in GET"});
+	debugPrint({"status: ", to_string(status)});
 	rep.setValue("status", status);
-	return;
 }
 

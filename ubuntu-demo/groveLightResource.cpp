@@ -13,8 +13,8 @@ void GroveLightResource::get()
 {
 	light = 0;
 
-	cout << debugInfo << "in GET" << endl;
+	debugPrint({"in GET"});
+	debugPrint({"light: ", to_string(light)});
 	rep.setValue("light", light);
-	return;
 }
 

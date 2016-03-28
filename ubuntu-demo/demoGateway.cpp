@@ -33,96 +33,96 @@ using namespace OC;
 
 int debug_mode;
 
-static void print_menu()
+static void printMenu()
 {
-	std::cout << "Demo gateway debug menu" << std::endl;
-	std::cout << "0  : Print this menu" << std::endl;
-	std::cout << "1  : Read sensors" << std::endl;
-	std::cout << "2  : Control LEDs" << std::endl;
-	std::cout << "3  : Write string to LCD" << std::endl;
-	std::cout << "4  : Write buzzer" << std::endl;
-	std::cout << "5  : Button control" << std::endl;
-	std::cout << "6  : Read ultrasonic" << std::endl;
-	std::cout << "7  : Read sensors (Arduino)" << std::endl;
-	std::cout << "8  : Write LED (Arduino)" << std::endl;
-	std::cout << "9  : Write string to LCD (Arduino)" << std::endl;
-	std::cout << "10  : Write buzzer (Arduino)" << std::endl;
-	std::cout << "111 : Button control (Arduino)" << std::endl;
+	cout << "Demo gateway debug menu" << endl;
+	cout << "0  : Print this menu" << endl;
+	cout << "1  : Read sensors (RPi2)" << endl;
+	cout << "2  : Control LEDs (RPi2)" << endl;
+	cout << "3  : Write string to LCD (RPi2)" << endl;
+	cout << "4  : Write buzzer (RPi2)" << endl;
+	cout << "5  : Button control (RPi2)" << endl;
+	cout << "6  : Read ultrasonic (RPi2)" << endl;
+	cout << "7  : Read sensors (Arduino)" << endl;
+	cout << "8  : Write LED (Arduino)" << endl;
+	cout << "9  : Write string to LCD (Arduino)" << endl;
+	cout << "10 : Write buzzer (Arduino)" << endl;
+	cout << "11 : Button control (Arduino)" << endl;
 }
 
 static void print_menu_led_p()
 {
-	std::cout << "1 : Turn on red LED" << std::endl;
-	std::cout << "2 : Turn on green LED" << std::endl;
-	std::cout << "3 : Turn on blue LED" << std::endl;
-	std::cout << "4 : Turn off red LED" << std::endl;
-	std::cout << "5 : Turn off green LED" << std::endl;
-	std::cout << "6 : Turn off blue LED" << std::endl;
-	std::cout << "7 : Read LED status" << std::endl;
+	cout << "1 : Turn on red LED" << endl;
+	cout << "2 : Turn on green LED" << endl;
+	cout << "3 : Turn on blue LED" << endl;
+	cout << "4 : Turn off red LED" << endl;
+	cout << "5 : Turn off green LED" << endl;
+	cout << "6 : Turn off blue LED" << endl;
+	cout << "7 : Read LED status" << endl;
 }
 
 static void print_menu_led_a()
 {
-	std::cout << "Enter LED value" << std::endl;
+	cout << "Enter LED value" << endl;
 }
 
 static void print_menu_lcd()
 {
-	std::cout << "Enter string" << std::endl;
+	cout << "Enter string" << endl;
 }
 
 static void print_menu_buzzer_p()
 {
-	std::cout << "Enter how long to beep" << std::endl;
+	cout << "Enter how long to beep" << endl;
 }
 
 static void print_menu_buzzer_a()
 {
-	std::cout << "Enter tone to beep" << std::endl;
+	cout << "Enter tone to beep" << endl;
 }
 
 static void print_menu_button_p()
 {
-	std::cout << "1 : Register button status" << std::endl;
-	std::cout << "2 : De-register button status" << std::endl;
-	std::cout << "3 : Read button status" << std::endl;
+	cout << "1 : Register button status" << endl;
+	cout << "2 : De-register button status" << endl;
+	cout << "3 : Read button status" << endl;
 }
 
 static void print_menu_button_a()
 {
-	std::cout << "1 : Register button status" << std::endl;
-	std::cout << "2 : De-register button status" << std::endl;
-	std::cout << "3 : Read button status" << std::endl;
+	cout << "1 : Register button status" << endl;
+	cout << "2 : De-register button status" << endl;
+	cout << "3 : Read button status" << endl;
 }
 
 void *find_all_resource(void *)
 {
 	// Raspberry Pi 2 server
-	std::string sensor_p_rt = "?rt=grovepi.sensor";
-	std::string led_p_rt = "?rt=grovepi.led";
-	std::string lcd_p_rt = "?rt=grovepi.lcd";
-	std::string buzzer_p_rt = "?rt=grovepi.buzzer";
-	std::string button_p_rt = "?rt=grovepi.button";
-	std::string ultrasonic_p_rt = "?rt=grovepi.ultrasonic";
+	string sensor_p_rt = "?rt=grovepi.sensor";
+	string led_p_rt = "?rt=grovepi.led";
+	string lcd_p_rt = "?rt=grovepi.lcd";
+	string buzzer_p_rt = "?rt=grovepi.buzzer";
+	string button_p_rt = "?rt=grovepi.button";
+	string ultrasonic_p_rt = "?rt=grovepi.ultrasonic";
 
 	// Arduino server
-	std::string sensor_a_rt = "?rt=grove.sensor";
-	std::string led_a_rt = "?rt=grove.led";
-	std::string lcd_a_rt = "?rt=grove.lcd";
-	std::string buzzer_a_rt = "?rt=grove.buzzer";
-	std::string button_a_rt = "?rt=grove.button";
+	string sensor_a_rt = "?rt=grove.sensor";
+	string led_a_rt = "?rt=grove.led";
+	string lcd_a_rt = "?rt=grove.lcd";
+	string buzzer_a_rt = "?rt=grove.buzzer";
+	string button_a_rt = "?rt=grove.button";
 
 	return NULL;
 }
 
 #if 0
-std::string trim(std::string& str)
+string trim(string& str)
 {
 	size_t first = str.find_first_not_of(' ');
 	size_t last = str.find_last_not_of(' ');
 
-	if(first == std::string::npos)
-		return std::string();
+	if(first == string::npos)
+		return string();
 	else
 		return str.substr(first, (last-first+1));
 }
@@ -132,7 +132,7 @@ void *socket_server_for_restful_api(void *)
 	int listenfd = 0, connfd = 0;
 	struct sockaddr_in serveraddr; 
 	char buffer[65];
-	std::string data, name, value;
+	string data, name, value;
 	int data_len;
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -155,29 +155,29 @@ void *socket_server_for_restful_api(void *)
 			data_len = read(connfd, buffer, sizeof(buffer));
 
 			if(data_len < 0) {
-				std::cout << "error: read failed" << std::endl;
+				cout << "error: read failed" << endl;
 				break;
 			} else if(data_len == 0) {
-				std::cout << "connection closed" << std::endl;
+				cout << "connection closed" << endl;
 				break;
 			}
 
 			data.assign(buffer);
-			std::cout << "Read: " << data << ":" << std::endl;
+			cout << "Read: " << data << ":" << endl;
 
 			name = data.substr(0, 32);
 			name = trim(name);
-			std::cout << "Name: " << name << ":" << std::endl;
+			cout << "Name: " << name << ":" << endl;
 
 			value = data.substr(32, 32);
 			value = trim(value);
 			if(value.empty()) {
-				std::cout << "read status" << std::endl;
+				cout << "read status" << endl;
 			} else {
-				std::cout << "write status: " << value << ":" << std::endl;
+				cout << "write status: " << value << ":" << endl;
 			}
 
-			std::ostringstream value_str;
+			ostringstream value_str;
 			memset(buffer, 0, sizeof(buffer));
 			if(name == "sensor_p_temp") {
 				if(value.empty()) {
@@ -185,13 +185,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write temperature value failed" << std::endl;
+						cout << "error: write temperature value failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to temperature sensor" << std::endl;
+					cout << "error: do not write value to temperature sensor" << endl;
 				}
 			} else if(name == "sensor_p_humidity") {
 				if(value.empty()) {
@@ -199,13 +199,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write humidity value failed" << std::endl;
+						cout << "error: write humidity value failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to humidity sensor" << std::endl;
+					cout << "error: do not write value to humidity sensor" << endl;
 				}
 			} else if(name == "sensor_p_light") {
 				if(value.empty()) {
@@ -213,13 +213,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write light value failed" << std::endl;
+						cout << "error: write light value failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to light sensor" << std::endl;
+					cout << "error: do not write value to light sensor" << endl;
 				}
 			} else if(name == "sensor_p_sound") {
 				if(value.empty()) {
@@ -227,13 +227,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write sound value failed" << std::endl;
+						cout << "error: write sound value failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to sound sensor" << std::endl;
+					cout << "error: do not write value to sound sensor" << endl;
 				}
 			} else if(name == "led_p_red") {
 				if(value.empty()) {
@@ -241,13 +241,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write red LED failed" << std::endl;
+						cout << "error: write red LED failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					mydemo.led_p_red = std::stoi(value);
+					mydemo.led_p_red = stoi(value);
 					putLedRepresentationP(ledResourceP);
 				}
 			} else if(name == "led_p_green") {
@@ -256,13 +256,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write green LED failed" << std::endl;
+						cout << "error: write green LED failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					mydemo.led_p_green = std::stoi(value);
+					mydemo.led_p_green = stoi(value);
 					putLedRepresentationP(ledResourceP);
 				}
 			} else if(name == "led_p_blue") {
@@ -271,13 +271,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write blue LED failed" << std::endl;
+						cout << "error: write blue LED failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					mydemo.led_p_blue = std::stoi(value);
+					mydemo.led_p_blue = stoi(value);
 					putLedRepresentationP(ledResourceP);
 				}
 			} else if(name == "lcd_p") {
@@ -285,10 +285,10 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, mydemo.lcd_p_str.c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write LCD failed" << std::endl;
+						cout << "error: write LCD failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
 					mydemo.lcd_p_str = value;
@@ -296,9 +296,9 @@ void *socket_server_for_restful_api(void *)
 				}
 			} else if(name == "buzzer_p") {
 				if(value.empty()) {
-					std::cout << "error: do not read buzzer" << std::endl;
+					cout << "error: do not read buzzer" << endl;
 				} else {
-					mydemo.buzzer_p = std::stoi(value);
+					mydemo.buzzer_p = stoi(value);
 					putBuzzerRepresentationP(buzzerResourceP);
 				}
 			} else if(name == "button_p") {
@@ -307,13 +307,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write button status failed" << std::endl;
+						cout << "error: write button status failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to button" << std::endl;
+					cout << "error: do not write value to button" << endl;
 				}
 			} else if(name == "sensor_p_ultrasonic") {
 				if(value.empty()) {
@@ -321,13 +321,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write ultrasonic value failed" << std::endl;
+						cout << "error: write ultrasonic value failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to ultrasonic" << std::endl;
+					cout << "error: do not write value to ultrasonic" << endl;
 				}
 			} else if(name == "led_a") {
 				if(value.empty()) {
@@ -335,13 +335,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write LED failed" << std::endl;
+						cout << "error: write LED failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					mydemo.led_a_status = std::stoi(value);
+					mydemo.led_a_status = stoi(value);
 					putLedRepresentationA(ledResourceA);
 				}
 			} else if(name == "lcd_a") {
@@ -349,10 +349,10 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, mydemo.lcd_a_str.c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write LCD failed" << std::endl;
+						cout << "error: write LCD failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
 					mydemo.lcd_a_str = value;
@@ -360,9 +360,9 @@ void *socket_server_for_restful_api(void *)
 				}
 			} else if(name == "buzzer_a") {
 				if(value.empty()) {
-					std::cout << "error: do not read buzzer" << std::endl;
+					cout << "error: do not read buzzer" << endl;
 				} else {
-					mydemo.buzzer_a = std::stoi(value);
+					mydemo.buzzer_a = stoi(value);
 					putBuzzerRepresentationA(buzzerResourceA);
 				}
 			} else if(name == "button_a") {
@@ -371,13 +371,13 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write button status failed" << std::endl;
+						cout << "error: write button status failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to button" << std::endl;
+					cout << "error: do not write value to button" << endl;
 				}
 			} else if(name == "touch_a") {
 				if(value.empty()) {
@@ -385,16 +385,16 @@ void *socket_server_for_restful_api(void *)
 					strncpy(buffer, value_str.str().c_str(), sizeof(buffer));
 					data_len = write(connfd, buffer, strlen(buffer));
 					if (data_len < 0) {
-						std::cout << "error: write touch status failed" << std::endl;
+						cout << "error: write touch status failed" << endl;
 						break;
 					} else if (data_len == 0) {
-						std::cout << "connection closed" << std::endl;
+						cout << "connection closed" << endl;
 					}
 				} else {
-					std::cout << "error: do not write value to touch" << std::endl;
+					cout << "error: do not write value to touch" << endl;
 				}
 			} else {
-				std::cout << "Unknown name: " << name << std::endl;
+				cout << "Unknown name: " << name << endl;
 			}
 
 		}
@@ -584,7 +584,7 @@ int main(int argc, char* argv[])
 	cout << "done" << endl;
 
 
-	std::cout << "Starting client" << std::endl;
+	cout << "Starting client" << endl;
 	RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
 	LedNode led("RPI2 LEDs", "grovepi.led");
 	LcdNode lcd("RPI2 LCD", "grovepi.lcd");

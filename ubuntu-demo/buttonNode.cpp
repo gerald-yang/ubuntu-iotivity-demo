@@ -21,5 +21,5 @@ bool ButtonNode::putEnable()
 void ButtonNode::getDataFromRep(const OCRepresentation& rep)
 {
 	rep.getValue("button", button);
-	cout << debugInfo << to_string(button) << endl;
+	debugPrint({"pressed: ", to_string(button).c_str()});
 }

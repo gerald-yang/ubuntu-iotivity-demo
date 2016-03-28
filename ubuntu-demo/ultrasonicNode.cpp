@@ -12,6 +12,6 @@ void UltrasonicNode::getDataFromRep(const OCRepresentation& rep)
 {
 	rep.getValue("ultrasonic", ultrasonic);
 	
-	cout << debugInfo << "ultrasonic: " << to_string(ultrasonic) << endl;
+	debugPrint({"ultrasonic: ", to_string(ultrasonic)});
 }
 

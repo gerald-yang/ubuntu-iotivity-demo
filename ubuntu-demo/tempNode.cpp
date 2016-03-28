@@ -11,6 +11,6 @@
 void TempNode::getDataFromRep(const OCRepresentation& rep)
 {
 	rep.getValue("temperature", temperature);
-	cout << debugInfo << "temperature: " << to_string(temperature) << endl;
+	debugPrint({"temperature: ", to_string(temperature)});
 }
 

@@ -18,6 +18,7 @@ public:
 		: SensorResource(_uniqueID, _resourceName, _resourceUri, _resourceTypeName, _isSecure) 
 	{
 		temperature = 0.0;
+		debugEnable = false;
 	};
 
 	void get();

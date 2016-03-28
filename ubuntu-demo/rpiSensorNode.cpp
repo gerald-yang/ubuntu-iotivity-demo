@@ -15,9 +15,9 @@ void RpiSensorNode::getDataFromRep(const OCRepresentation& rep)
 	rep.getValue("light", light);
 	rep.getValue("sound", sound);
 	
-	cout << debugInfo << "temperature: " << to_string(temperature) << endl;
-	cout << debugInfo << "humidity: " << to_string(humidity) << endl;
-	cout << debugInfo << "light: " << to_string(light) << endl;
-	cout << debugInfo << "sound: " << to_string(sound) << endl;
+	debugPrint({"temperature: ", to_string(temperature)});
+	debugPrint({"humidity: ", to_string(humidity)});
+	debugPrint({"light: ", to_string(light)});
+	debugPrint({"sound: ", to_string(sound)});
 }
 

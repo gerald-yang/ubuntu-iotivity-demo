@@ -11,6 +11,7 @@
 
 
 #include <functional>
+#include <initializer_list>
 #include <iostream>
 #include <fstream>
 #include <mutex>
@@ -21,8 +22,8 @@
 #include "OCPlatform.h"
 #include "OCApi.h"
 
-using namespace OC;
 using namespace std;
+using namespace OC;
 namespace PH = std::placeholders;
 
 class BaseResource
@@ -34,6 +35,8 @@ public:
 	virtual void put(OCRepresentation&) = 0;
 	virtual void get() = 0;
 
+	void debugPrint(initializer_list<string> list);
+
 protected:
 	string uniqueID;
 
@@ -41,6 +44,7 @@ protected:
 	string resourceUri;
 	string resourceTypeName;
 
+	bool debugEnable;
 	string debugInfo;
 
 	bool isSecure;

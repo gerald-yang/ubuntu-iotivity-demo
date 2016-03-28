@@ -19,14 +19,12 @@ void LedResource::put(OCRepresentation& recv_rep)
 
 	status = temp;
 
-	cout << debugInfo << "in PUT" << endl;
+	debugPrint({"in PUT"});
 	return;
 }
 
 void LedResource::get()
 {
+	debugPrint({"in GET"});
 	rep.setValue("status", status);
-
-	cout << debugInfo << "in GET" << endl;
-	return;
 }

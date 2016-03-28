@@ -17,6 +17,7 @@
 #include <thread>
 #include <chrono>
 #include <condition_variable>
+#include <initializer_list>
 
 #include "OCPlatform.h"
 #include "OCApi.h"
@@ -31,6 +32,7 @@ public:
 	BaseNode(string _requestName, string _requestUri);
 	~BaseNode();
 
+	void debugPrint(initializer_list <string> list);
 	void startFindResource();
 	bool found();
 
@@ -51,6 +53,7 @@ protected:
 	shared_ptr<OCResource> resourceHandle;
 	string hostAddress;
 
+	bool debugEnable;
 	string debugInfo;
 
 	thread *findThread;

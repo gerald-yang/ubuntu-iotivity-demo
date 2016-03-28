@@ -11,9 +11,8 @@
 
 void GroveTempResource::get()
 {
-	cout << debugInfo << "in GET" << endl;
-	rep.setValue("URI", resourceUri);
+	debugPrint({"in GET"});
+	debugPrint({"temperature: ", to_string(temperature)});
 	rep.setValue("temperature", temperature);
-	return;
 }
 

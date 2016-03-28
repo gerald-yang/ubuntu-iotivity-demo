@@ -20,7 +20,19 @@ BaseResource::BaseResource(string _uniqueID, string _resourceName, string _resou
 
 	rep.setUri(resourceUri.c_str());
 
+	debugEnable = true;
 	debugInfo = resourceName + "> ";
+}
+
+void BaseResource::debugPrint(initializer_list<string> list)
+{
+	if(debugEnable) {
+		cout << debugInfo;
+		for(string str : list) {
+			cout << str;
+		}
+		cout << endl;
+	}
 }
 
 void BaseResource::createResource()
@@ -46,7 +58,7 @@ void BaseResource::createResource()
 
 OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> request)
 {
-	cout << debugInfo << "in entityHandler" << endl;
+	debugPrint({"in entityHandler"});
 	OCEntityHandlerResult ehResult = OC_EH_ERROR;
 
 	if(request) {
@@ -55,7 +67,7 @@ OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> 
 		int requestFlag = request->getRequestHandlerFlag();
 
 		if(requestFlag & RequestHandlerFlag::RequestFlag) {
-			cout << debugInfo << "requestFlag : Request" << endl;
+			debugPrint({"requestFlag : Request"});
 			auto pResponse = make_shared<OC::OCResourceResponse>();
 			pResponse->setRequestHandle(request->getRequestHandle());
 			pResponse->setResourceHandle(request->getResourceHandle());
@@ -64,14 +76,14 @@ OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> 
 			QueryParamsMap queries = request->getQueryParameters();
 
 			if (!queries.empty()) {
-				cout << debugInfo << "Query processing upto entityHandler" << endl;
+				debugPrint({"Query processing upto entityHandler"});
 			}
 			for (auto it : queries) {
-				cout << debugInfo << "Query key: " << it.first << " value : " << it.second << endl;
+				debugPrint({"Query key: ", it.first, " value : ", it.second});
 			}
 
 			if(requestType == "GET") {
-				cout << debugInfo << "requestType : GET" << endl;
+				debugPrint({"requestType : GET"});
 				get();
 				pResponse->setErrorCode(200);
 				pResponse->setResponseResult(OC_EH_OK);
@@ -80,7 +92,7 @@ OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> 
 					ehResult = OC_EH_OK;
 				}
 			} else if(requestType == "PUT") {
-				cout << debugInfo << "requestType : PUT" << endl;
+				debugPrint({"requestType : PUT"});
 				OCRepresentation rep = request->getResourceRepresentation();
 
 				put(rep);
@@ -92,10 +104,10 @@ OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> 
 					ehResult = OC_EH_OK;
 				}
 			} else if(requestType == "POST") {
-				cout << debugInfo << "requestType : POST" << endl;
-				cout << debugInfo << "unsupported requestType" << endl;
+				debugPrint({"requestType : POST"});
+				debugPrint({"unsupported requestType"});
 			} else if(requestType == "DELETE") {
-				cout << debugInfo << "Delete request received" << endl;
+				debugPrint({"Delete request received"});
 			}
 		}
 

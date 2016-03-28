@@ -25,6 +25,7 @@ BaseNode::BaseNode(string _requestName, string _requestUri)
 	putDone = false;
 	inObserve = false;
 
+	debugEnable = true;
 	debugInfo = requestName + "> ";
 }
 
@@ -32,6 +33,17 @@ BaseNode::~BaseNode()
 {
 	if(inObserve) {
 		resourceHandle->cancelObserve();
+	}
+}
+
+void BaseNode::debugPrint(initializer_list<string> list)
+{
+	if(debugEnable) {
+		cout << debugInfo;
+		for(auto str : list) {
+			cout << str;
+		}
+		cout << endl;
 	}
 }
 
@@ -65,7 +77,7 @@ void BaseNode::get(bool wait)
 			if(!found()) return;
 		}
 
-		cout << debugInfo << "send GET request" << endl;
+		debugPrint({"send GET request"});
 		QueryParamsMap test;
 
 		if(wait) {
@@ -79,7 +91,7 @@ void BaseNode::get(bool wait)
 		}
 
 	} else {
-		cout << debugInfo << "not support GET reqeust" << endl;
+		cout << debugInfo << "error: not support GET reqeust" << endl;
 	}
 }
 
@@ -92,7 +104,7 @@ void BaseNode::put(bool wait)
 			if(!found()) return;
 		}
 
-		cout << debugInfo << "send PUT request" << endl;
+		debugPrint({"send PUT request"});
 		OCRepresentation rep;
 		putDataToRep(rep);
 
@@ -106,7 +118,7 @@ void BaseNode::put(bool wait)
 			getPutDone(true);
 		}
 	} else {
-		cout << debugInfo << "not support PUT request" << endl;
+		cout << debugInfo << "error: not support PUT request" << endl;
 	}
 }
 
@@ -168,46 +180,45 @@ void BaseNode::onPutCheck(OCRepresentation rep)
 // Callback to found resources
 void BaseNode::foundResource(shared_ptr<OCResource> resource)
 {
-	cout << debugInfo << "In foundResource" << endl;
+	debugPrint({"In foundResource"});
 
 	try {
 		lock_guard<mutex> lock(resourceLock);
 
 		if(resourceHandle) {
 			if(resourceHandle->uniqueIdentifier() == resource->uniqueIdentifier()) {
-				cout << "Found resource " << resource->uniqueIdentifier() << " again, skip" << endl;
+				cout << debugInfo << "Found resource " << resource->uniqueIdentifier() << " again, skip" << endl;
 			} else {
-				cout << "Found another resource " << resource->uniqueIdentifier() << 
+				cout << debugInfo << "Found another resource " << resource->uniqueIdentifier() <<
 					", need to create a new resource node for it" << endl;
 			}
 		} else {
 			resourceHandle = resource;
 			hostAddress = resourceHandle->host();
 
-			cout << debugInfo << "Found resource " << resource->uniqueIdentifier();
-			cout << " from " << hostAddress << endl;
+			cout << debugInfo << "Found resource " << resource->uniqueIdentifier() << " from " << hostAddress << endl;
 			cout << debugInfo << "for the first time on server with ID: " << resource->sid() << endl;
 		}
 
 	} catch(exception& e) {
-		cerr << "Exception in foundResource: "<< e.what() << endl;
+		cout << debugInfo << "Exception in foundResource: "<< e.what() << endl;
 	}
 }
 
 // Callback to GET request
 void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode)
 {
-	cout << debugInfo << "onGet" << endl;
+	debugPrint({"onGet"});
 
 	try {
 		if(eCode == OC_STACK_OK) {
-			cout << debugInfo << "GET request was successful" << endl;
+			debugPrint({"GET request was successful"});
 			getDataFromRep(rep);
 		} else {
-			cout << "onGET Response error: " << eCode << endl;
+			cout << debugInfo << "onGET Response error: " << eCode << endl;
 		}
 	} catch(exception& e) {
-		cout << "Exception: " << e.what() << " in onGet" << endl;
+		cout << debugInfo << "Exception: " << e.what() << " in onGet" << endl;
 	}
 
 	setGetDone(true);
@@ -216,11 +227,11 @@ void BaseNode::onGet(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 // Callback after PUT done
 void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentation& rep, const int eCode)
 {
-	cout << debugInfo << "onPut" << endl;
+	debugPrint({"onPut"});
 
 	try {
 		if(eCode == OC_STACK_OK) {
-			cout << debugInfo << "PUT request was successful" << endl;
+			debugPrint({"PUT request was successful"});
 			onPutCheck(rep);
 		} else {
 			cout << debugInfo << "onPut Response error: " << eCode << endl;
@@ -236,24 +247,24 @@ void BaseNode::onPut(const HeaderOptions& /*headerOptions*/, const OCRepresentat
 void BaseNode::onObserve(const HeaderOptions /*headerOptions*/, const OCRepresentation& rep, 
 			const int& eCode, const int& sequenceNumber)
 {
-	cout << debugInfo << "onObserve" << endl;
+	debugPrint({"onObserve"});
 
 	try {
 		if(eCode == OC_STACK_OK && sequenceNumber != OC_OBSERVE_NO_OPTION) {
 			if(sequenceNumber == OC_OBSERVE_REGISTER) {
-				cout << debugInfo << "Observe registration action is successful" << endl;
+				debugPrint({"Observe registration action is successful"});
 				inObserve = true;
 			} else if(sequenceNumber == OC_OBSERVE_DEREGISTER) {
-				cout << debugInfo << "Observe De-registration action is successful" << endl;
+				debugPrint({"Observe De-registration action is successful"});
 				inObserve = false;
 			}
 
-			cout << debugInfo << "OBSERVE RESULT:"<< endl;
-			cout << debugInfo << "\tSequenceNumber: "<< sequenceNumber << endl;
+			debugPrint({"OBSERVE RESULT:"});
+			debugPrint({"\tSequenceNumber: ", to_string(sequenceNumber)});
 			getDataFromRep(rep);
 		} else {
 			if(sequenceNumber == OC_OBSERVE_NO_OPTION) {
-				cout << debugInfo << "Observe registration or de-registration action is failed" << endl;
+				debugPrint({"Observe registration or de-registration action is failed"});
 			} else {
 				cout << debugInfo << "onObserve response error: " << eCode << endl;
 			}
