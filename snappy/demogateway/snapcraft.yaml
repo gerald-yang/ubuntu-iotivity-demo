@@ -1,10 +1,10 @@
 name: iotivity-demogateway
-version: 1.0.3
+version: 1.1.0
 vendor: Gerald Yang <gerald.yang@canonical.com>
 architectures: [amd64]
 summary: An Iotivity demo gateway
 description: An Iotivity demo gateway, discovers all known resources on local LAN, collects all sensor data and provides some rules.
-icon: ./iotivity-demogateway.png
+icon: ./iotivity.png
 
 #binaries:
 #    start-demo:

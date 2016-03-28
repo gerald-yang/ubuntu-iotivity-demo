@@ -68,7 +68,7 @@ elif [ "$1" == "demo-snappy" ]; then
 	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/nucdemo/lib/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/nucdemo/
 	cd snappy/nucdemo && snapcraft clean && snapcraft
-	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snapp/demogateway/lib/
+	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/demogateway/lib/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway snappy/demogateway/
 	cd snappy/demogateway && snapcraft clean && snapcraft
 elif [ "$1" == "clean" ]; then
