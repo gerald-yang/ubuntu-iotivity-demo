@@ -430,7 +430,7 @@ string wait_for_network_ip(string netif)
 			}
 
 			// if netif is "*", check the first interface we have except lo
-			if(netif == "*" && (ifa->ifa_addr->sa_family == AF_INET)) {
+			if(netif == "-" && (ifa->ifa_addr->sa_family == AF_INET)) {
 				if (s != 0) {
 					cout << "getnameinfo() failed: " << gai_strerror(s) << endl;
 				} else {
