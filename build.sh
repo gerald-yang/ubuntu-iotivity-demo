@@ -27,7 +27,7 @@ print_usage() {
 
 if [ -z "$1" ]; then
 	TARGET="all"
-elif [ "$1" == "demo" ] || [ "$1" == "demo-snappy" ]; then
+elif [ "$1" == "all" ] || [ "$1" == "demo" ] || [ "$1" == "demo-snappy" ]; then
 	TARGET=$1
 elif [ "$1" == "-h" ]; then
 	print_usage
@@ -57,9 +57,9 @@ else
 fi
 
 if [ -z "$4" ]; then
-	SNAPCRAFT=$4
-else
 	SNAPCRAFT="snapcraft"
+else
+	SNAPCRAFT=$4
 fi
 
 if ! [ -L $IOTIVITY/ubuntu-demo ]; then
@@ -72,12 +72,14 @@ if [ "$TARGET" == "all" ]; then
 elif [ "$1" == "demo" ]; then
 	cd $IOTIVITY && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux ubuntu-demo
 elif [ "$1" == "demo-snappy" ]; then
-	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/nucdemo/lib/
-	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo snappy/nucdemo/
-	cd snappy/nucdemo && $SNAPCRAFT clean && $SNAPCRAFT
+	if [ "$ARCH" == x86_64 ]; then
+		cp -f $IOTIVITY/out/linux/$ARCH/release/*.so $DEMOROOT/snappy/nucdemo/lib/
+		cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo $DEMOROOT/snappy/nucdemo/
+		cd $DEMOROOT/snappy/nucdemo && $SNAPCRAFT clean && $SNAPCRAFT
+	fi
 	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/demogateway/lib/$MAGIC_BIN/
-	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway snappy/demogateway/magic-bin/$MAGIC_BIN/
-	cd snappy/demogateway && $SNAPCRAFT clean && $SNAPCRAFT
+	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway $DEMOROOT/snappy/demogateway/magic-bin/$MAGIC_BIN/
+	cd $DEMOROOT/snappy/demogateway && $SNAPCRAFT clean && $SNAPCRAFT
 elif [ "$1" == "clean" ]; then
 	cd $IOTIVITY && scons -c TARGET_ARCH=$ARCH TARGET_OS=linux
 fi
