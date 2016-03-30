@@ -405,7 +405,7 @@ void *socket_server_for_restful_api(void *)
 }
 #endif
 	
-string wait_for_network(char *ifname)
+string wait_for_network_ip(string netif)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int s;
@@ -424,7 +424,24 @@ string wait_for_network(char *ifname)
 
 			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
-			if((strcmp(ifa->ifa_name, ifname) == 0) && (ifa->ifa_addr->sa_family == AF_INET)) {
+			if(!strcmp(ifa->ifa_name, "lo")) {
+				cout << "skip lo" << endl;
+				continue;
+			}
+
+			// if netif is "*", check the first interface we have except lo
+			if(netif == "*" && (ifa->ifa_addr->sa_family == AF_INET)) {
+				if (s != 0) {
+					cout << "getnameinfo() failed: " << gai_strerror(s) << endl;
+				} else {
+					host_ip.clear();
+					host_ip = host;
+					freeifaddrs(ifaddr);
+					return host_ip;
+				}
+			}
+
+			if((strncmp(ifa->ifa_name, netif.c_str(), netif.size()) == 0) && (ifa->ifa_addr->sa_family == AF_INET)) {
 				if (s != 0) {
 					cout << "getnameinfo() failed: " << gai_strerror(s) << endl;
 				} else {
@@ -441,6 +458,37 @@ string wait_for_network(char *ifname)
 	}
 
 	return host_ip;
+}
+
+bool wait_for_network_ping()
+{
+	CURL *curl;
+	CURLcode res;
+
+	curl = curl_easy_init();
+
+	if(curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, "www.google.com");
+		while ((res = curl_easy_perform(curl)) != CURLE_OK) {
+			switch(res) {
+				case CURLE_COULDNT_CONNECT:
+				case CURLE_COULDNT_RESOLVE_HOST:
+				case CURLE_COULDNT_RESOLVE_PROXY:
+					break;
+				default:
+					cout << "request failed: " << curl_easy_strerror(res) << endl;
+					curl_easy_cleanup(curl);
+					return false;
+			}
+		}
+
+		/* always cleanup */ 
+		curl_easy_cleanup(curl);
+		return true;
+	}
+
+	cout << "can not initialize curl library" << endl;
+	return false;
 }
 
 void printUsage()
@@ -540,20 +588,36 @@ int main(int argc, char* argv[])
 {
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
 	string host_ip;
+	string netif = argv[1];
 
 	if(argc != 4) {
 		printUsage();
-		return -(1);
+		return -1;
 	}
 
 	// Wait for specific network interface up
 	cout << "Waiting for network interface: " << argv[1] << endl;
-	host_ip = wait_for_network(argv[1]);
+#if 0
+	host_ip = wait_for_network_ip(netif);
 	if(host_ip == "IP error") {
 		cout << "Network interface " << argv[1] << " is not available" << endl;
 		return 1;
 	}
-	cout << argv[1] << " is up" << endl;
+	cout << netif << " is up" << endl;
+#else
+	if(wait_for_network_ping()) {
+		host_ip = wait_for_network_ip(netif);
+		if(host_ip == "IP error") {
+			cout << "Network interface " << argv[1] << " is not available" << endl;
+			return -1;
+		}
+	} else {
+		cout << "network is unavailable" << endl;
+		return -1;
+	}
+#endif
+	sleep(2);
+	cout << "network is available, IP: " << host_ip << endl;
 
 	// Configure InfluxDB class
 	cout << "InfluxDB IP: " << argv[2] << endl;
