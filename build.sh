@@ -8,7 +8,7 @@ IOTIVITY=$DEMOROOT/$IOTIVITY_VER
 
 print_usage() {
 	echo "Usage:"
-	echo "build.sh [TARGET] [ARCH]"
+	echo "build.sh [TARGET] [ARCH] [CORE]"
 	echo " "
 	echo "Without TARGET:"
        	echo "build whole iotivity project and ubuntu-demo for x86_64"
@@ -22,6 +22,8 @@ print_usage() {
 	echo "ARCH:"
 	echo "x86_64"
 	echo "armeabi-v7a-hard"
+	echo " "
+	echo "CORE: build with CPU cores enabled (default: 4 cores)"
 	echo " "
 }
 

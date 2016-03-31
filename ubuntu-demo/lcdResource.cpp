@@ -10,11 +10,8 @@
 
 void LcdResource::put(OCRepresentation& recv_rep)
 {
-	recv_rep.getValue("str", str);
-
-
 	cout << debugInfo << "in PUT" << endl;
-	return;
+	recv_rep.getValue("str", str);
 }
 
 void LcdResource::get()

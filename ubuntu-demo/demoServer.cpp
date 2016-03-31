@@ -20,6 +20,7 @@ using namespace OC;
 using namespace std;
 namespace PH = std::placeholders;
 
+#if 0
 int gObservation = 0;
 void CheckButtonRepresentation(void *param);
 void * grovepi_thread(void *param);
@@ -744,8 +745,10 @@ static FILE* client_open(const char* /*path*/, const char *mode)
 	return fopen("./oic_svr_db_server.json", mode);
 }
 
+#endif
 int main(int argc, char* argv[])
 {
+#if 0
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
 
 	if (argc == 1) {
@@ -830,6 +833,6 @@ int main(int argc, char* argv[])
 
 	// No explicit call to stop the platform.
 	// When OCPlatform::destructor is invoked, internally we do platform cleanup
-
+#endif
 	return 0;
 }
