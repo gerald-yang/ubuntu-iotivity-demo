@@ -62,7 +62,7 @@ def sensor_read_temp():
 	while retry > 0:
 		try:
         		[ temp,hum ] = grovepi.dht(dht11_sensor_port,0)
-        		time.sleep(.05)
+        		time.sleep(.01)
 			if math.isnan(temp):
 				print 'fail to read temperature sensor, retry again'
 				retry = retry -1
@@ -84,7 +84,7 @@ def sensor_read_humidity():
 	while retry > 0:
 		try:
         		[ temp,hum ] = grovepi.dht(dht11_sensor_port,0)
-        		time.sleep(.05)
+        		time.sleep(.01)
 			if math.isnan(hum):
 				print 'fail to read humidity sensor, retry again'
 				retry = retry - 1
@@ -104,7 +104,7 @@ def sensor_read_light():
 	while retry > 0:
 		try:
         		sensor_value = grovepi.analogRead(light_sensor)
-        		time.sleep(.05)
+        		time.sleep(.01)
 			break;
 		except:
 			print 'can not read light sensor, retry again'
@@ -121,7 +121,7 @@ def sensor_read_sound():
 	while retry > 0:
 		try:
         		sensor_value = grovepi.analogRead(sound_sensor)
-        		time.sleep(.05)
+        		time.sleep(.01)
 			break
 		except:
 			print 'can not read sound sensor, retry again'
@@ -137,8 +137,8 @@ def led_write_red(value):
 	retry = 3
 	while retry > 0:
 		try:
-        		time.sleep(.05)
         		grovepi.digitalWrite(led_red, value)
+        		time.sleep(.01)
 			break
 		except:
 			print 'can not write red led, retry again'
@@ -154,8 +154,8 @@ def led_write_green(value):
 	retry = 3
 	while retry > 0:
 		try:
-        		time.sleep(.05)
         		grovepi.digitalWrite(led_green, value)
+        		time.sleep(.01)
 			break
 		except:
 			print 'can not write green led, retry again'
@@ -171,8 +171,8 @@ def led_write_blue(value):
 	retry = 3
 	while retry > 0:
 		try:
-        		time.sleep(.05)
         		grovepi.digitalWrite(led_blue, value)
+        		time.sleep(.01)
 			break
 		except:
 			print 'can not write blue led, retry again'
@@ -190,9 +190,9 @@ def lcd_write_str(value):
 	retry = 3
 	while retry > 0:
 		try:
-   		    	time.sleep(.05)
 			grove_rgb_lcd.setRGB(0, 255, 0)
 			grove_rgb_lcd.setText(value)
+   		    	time.sleep(.01)
 			break
 		except:
 			print 'can not write lcd, retry again'
@@ -205,17 +205,17 @@ def lcd_write_str(value):
 		return 0
 
 def buzzer_write(value):
+        time.sleep(.03)
         grovepi.digitalWrite(buzzer,1)
         time.sleep(value)
         grovepi.digitalWrite(buzzer,0)
-        time.sleep(.05)
 
 def button_read():
 	retry = 3
 	while retry > 0:
 		try:
         		status = grovepi.digitalRead(button)
-		        time.sleep(.05)
+		        time.sleep(.01)
 			break
 		except:
 			print 'can not read button, retry again'
@@ -232,7 +232,7 @@ def sensor_read_ultrasonic():
 	while retry > 0:
 		try:
 			status = grovepi.ultrasonicRead(ultrasonic_ranger)
-			time.sleep(.05)
+			time.sleep(.01)
 			break
 		except:
 			print 'can not read ultrasonic, retry again'
