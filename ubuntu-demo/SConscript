@@ -76,14 +76,14 @@ if target_os in ['darwin', 'ios']:
 # Source files and Targets
 ######################################################################
 demogateway = demo_env.Program('demogateway', ['demoGateway.cpp', 
-'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'groveTempResource.cpp', 'ledResource.cpp', 
+'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'ledResource.cpp', 
 'lcdResource.cpp', 'buttonResource.cpp', 'baseNode.cpp', 'sensorNode.cpp', 'tempNode.cpp', 'humidityNode.cpp', 
 'lightNode.cpp', 'soundNode.cpp', 'rpiSensorNode.cpp', 'ledNode.cpp', 'lcdNode.cpp', 'buzzerNode.cpp', 
 'buttonNode.cpp', 'ultrasonicNode.cpp', 'influxDB.cpp'])
 
 #demoServer = demo_env.Program('demoserver', ['demoServer.cpp',
-#'baseResource.cpp', 'sensorResource.cpp', 'groveTempResource.cpp', 'ledResource.cpp', 'lcdResource.cpp',
-#'buttonResource.cpp', 'buzzerResource.cpp', 'groveUltrasonicResource.cpp', 'grovepi.cpp'])
+#'baseResource.cpp', 'sensorResource.cpp', 'grovepiSensorResource.cpp', 'ledResource.cpp', 'lcdResource.cpp',
+#'buttonResource.cpp', 'buzzerResource.cpp', 'groveUltrasonicResource.cpp', 'grovepiResource.cpp'])
 
 nucdemo = demo_env.Program('nucdemo', ['nucdemo.cpp', 
 'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'influxDB.cpp'])

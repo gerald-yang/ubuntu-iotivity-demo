@@ -31,8 +31,6 @@
 #include "OCApi.h"
 
 #include "cpuTempResource.h"
-#include "groveTempResource.h"
-#include "ledResource.h"
 
 
 using namespace OC;

@@ -1,34 +1,17 @@
-#include <queue>
-#include <list>
 #include <functional>
-
-#include <arpa/inet.h>
-#include <ifaddrs.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <mutex>
 #include <condition_variable>
-#include <signal.h>
-#include <netinet/in.h>
+
+#include <curl/curl.h>
 
 #include "OCPlatform.h"
 #include "OCApi.h"
+
+#include "grovepiSensorResource.h"
 
 using namespace OC;
 using namespace std;
 namespace PH = std::placeholders;
 
-#if 0
-int gObservation = 0;
-void CheckButtonRepresentation(void *param);
-void * grovepi_thread(void *param);
-queue <void (*)(void *)> write_queue;
-mutex led_write_lock;
-void t_write_led_red(void *);
-void t_write_led_green(void *);
-void t_write_led_blue(void *);
 void * handleSlowResponse (void *param, std::shared_ptr<OCResourceRequest> pRequest);
 // Specifies where to notify all observers or list of observers
 // false: notifies all observers
@@ -44,6 +27,7 @@ bool isSecure = false;
 bool isSlowResponse = false;
 
 
+#if 0
 class DemoResource
 {
 
@@ -693,17 +677,19 @@ void PrintUsage()
 	std::cout << "    3 - Secure resource and notify list of observers\n\n";
 	std::cout << "    4 - Non-secure resource, GET slow response, notify all observers\n";
 }
+#endif
 
-int wait_for_network(char *ifname)
+string wait_for_network_ip(string netif)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int s;
 	char host[NI_MAXHOST];
+	string host_ip = "IP error";
 
 	while(1) {
 		if (getifaddrs(&ifaddr) == -1) {
-			std::cout << "getifaddrs" << std::endl;
-			return 1;
+			cout << "getifaddrs" << endl;
+			return host_ip;
 		}
 
 		for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
@@ -712,23 +698,31 @@ int wait_for_network(char *ifname)
 
 			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
-			if(((strncmp(ifa->ifa_name, "eth", 3) == 0) || strncmp(ifa->ifa_name, "eno", 3) == 0) && (ifa->ifa_addr->sa_family == AF_INET)) {
+			if(!strcmp(ifa->ifa_name, "lo")) {
+				cout << "skip lo" << endl;
+				continue;
+			}
+
+			// if netif is "*", check the first interface we have except lo
+			if(netif == "-" && (ifa->ifa_addr->sa_family == AF_INET)) {
 				if (s != 0) {
-					std::cout << "getnameinfo() failed: " << gai_strerror(s) << std::endl;
+					cout << "getnameinfo() failed: " << gai_strerror(s) << endl;
 				} else {
-					std::cout << "Ethernet is up, start demoserver" << std::endl;
+					host_ip.clear();
+					host_ip = host;
 					freeifaddrs(ifaddr);
-					return 0;
+					return host_ip;
 				}
 			}
 
-			if(((strncmp(ifa->ifa_name, "wlan", 4) == 0) || strncmp(ifa->ifa_name, "wlo", 3) == 0) && (ifa->ifa_addr->sa_family == AF_INET)) {
+			if((strncmp(ifa->ifa_name, netif.c_str(), netif.size()) == 0) && (ifa->ifa_addr->sa_family == AF_INET)) {
 				if (s != 0) {
-					std::cout << "getnameinfo() failed: " << gai_strerror(s) << std::endl;
+					cout << "getnameinfo() failed: " << gai_strerror(s) << endl;
 				} else {
-					std::cout << "Wireless is up, start demoserver" << std::endl;
+					host_ip.clear();
+					host_ip = host;
 					freeifaddrs(ifaddr);
-					return 0;
+					return host_ip;
 				}
 			}
 		}
@@ -737,7 +731,38 @@ int wait_for_network(char *ifname)
 		sleep(1);
 	}
 
-	return 1;
+	return host_ip;
+}
+
+bool wait_for_network_ping()
+{
+	CURL *curl;
+	CURLcode res;
+
+	curl = curl_easy_init();
+
+	if(curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, "www.google.com");
+		while ((res = curl_easy_perform(curl)) != CURLE_OK) {
+			switch(res) {
+				case CURLE_COULDNT_CONNECT:
+				case CURLE_COULDNT_RESOLVE_HOST:
+				case CURLE_COULDNT_RESOLVE_PROXY:
+					break;
+				default:
+					cout << "request failed: " << curl_easy_strerror(res) << endl;
+					curl_easy_cleanup(curl);
+					return false;
+			}
+		}
+
+		/* always cleanup */ 
+		curl_easy_cleanup(curl);
+		return true;
+	}
+
+	cout << "can not initialize curl library" << endl;
+	return false;
 }
 
 static FILE* client_open(const char* /*path*/, const char *mode)
@@ -745,11 +770,10 @@ static FILE* client_open(const char* /*path*/, const char *mode)
 	return fopen("./oic_svr_db_server.json", mode);
 }
 
-#endif
 int main(int argc, char* argv[])
 {
-#if 0
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
+	string host_ip;
 
 	if (argc == 1) {
 		isListOfObservers = false;
@@ -779,6 +803,17 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	if(wait_for_network_ping()) {
+		host_ip = wait_for_network_ip("-");
+		if(host_ip == "IP error") {
+			cout << "Network is unavailable" << endl;
+			return -1;
+		}
+	} else {
+		cout << "Network is unavailable" << endl;
+		return -1;
+	}
+
 	// Create PlatformConfig object
 	cout << "Configuring iotivity server ... ";
 	PlatformConfig cfg {
@@ -793,7 +828,8 @@ int main(int argc, char* argv[])
 	OCPlatform::Configure(cfg);
 	cout << "done" << endl;
 
-
+	//GrovepiSensorResource ;
+#if 0
 
 	try {
 		// Create the instance of the resource class

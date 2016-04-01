@@ -6,13 +6,17 @@
 //
 //******************************************************************
 
-#include "groveTempResource.h"
+#include "grovepiSensorResource.h"
 
 
-void GroveTempResource::get()
+void GrovepiSensorResource::get()
 {
 	debugPrint({"in GET"});
 	debugPrint({"temperature: ", to_string(temperature)});
 	rep.setValue("temperature", temperature);
 }
 
+void GrovepiSensorResource::put(OCRepresentation& recv_rep)
+{
+	cout << debugInfo << "Un-support request PUT" << endl;
+}
