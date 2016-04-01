@@ -93,6 +93,94 @@ def sensorThread():
 				read_list[rjob]()
 
 
+def clientThread(conn):
+	global write_list
+
+	global temperature
+	global humidity
+	global light
+	global sound
+	global led_red
+	global led_green
+	global led_blue
+	global lcd
+	global button
+	global buzzer
+	global ultrasonic
+
+	while True:
+		data = conn.recv(64)
+		if not data:
+			print 'Connection closed'
+			break;
+		else:
+			#print 'Recv: ' + data
+			name = data[:32].lstrip().rstrip()
+			unstrip_value = data[32:].strip('\0')
+			value = unstrip_value.lstrip().rstrip()
+			#print name
+			#print unstrip_value
+			#print value
+
+			if not name:
+				print 'No data available'
+				break;
+			else:
+				if name == 'sensor_temp':
+					#print 'temperature: ' + str(temperature)
+					conn.send(str(temperature))
+				elif name == 'sensor_humidity':
+					#print 'humidity: ' + str(humidity)
+					conn.send(str(humidity))
+				elif name == 'sensor_light':
+					#print 'light: ' + str(light)
+					conn.send(str(light))
+				elif name == 'sensor_sound':
+					#print 'sound: ' + str(sound)
+					conn.send(str(sound))
+				elif name == 'led_write_red':
+					if not value:
+						print 'wrong message format: ' + data
+					else:
+						print 'led red: ' + value
+						led_red = int(value)
+						write_list.append(t_write_led_red)
+				elif name == 'led_write_green':
+					if not value:
+						print 'wrong message format: ' + data
+					else:
+						print 'led green: ' + value
+						led_green = int(value)
+						write_list.append(t_write_led_green)
+				elif name == 'led_write_blue':
+					if not value:
+						print 'wrong message format: ' + data
+					else:
+						print 'led blue: ' + value
+						led_blue = int(value)
+						write_list.append(t_write_led_blue)
+				elif name == 'lcd_write':
+					if not value:
+						print 'wrong message format: ' + data
+					else:
+						print 'lcd string: ' + unstrip_value
+						lcd = unstrip_value
+						write_list.append(t_write_lcd)
+				elif name == 'buzzer_write':
+					if not value:
+						print 'wrong message format: ' + data
+					else:
+						print 'buzzer: ' + value
+						buzzer = float(value)
+						write_list.append(t_write_buzzer)
+				elif name == 'button_read':
+					#print 'button: ' + str(button)
+					conn.send(str(button))
+				elif name == 'ultrasonic_read':
+					#print 'ultrasonic: ' + str(ultrasonic)
+					conn.send(str(ultrasonic))
+
+
 
 if __name__ == '__main__':
 	grovepilib.pin_config()
@@ -118,7 +206,7 @@ if __name__ == '__main__':
 		socket.AF_INET, socket.SOCK_STREAM)
 	print 'Bind to localhost port 5566'
 	serversocket.bind(('localhost', 5566))
-	serversocket.listen(5)
+	serversocket.listen(64)
 
 	print 'Start listening'
 
@@ -127,77 +215,10 @@ if __name__ == '__main__':
 		print 'Accepted connection from'
 		print addr
 
-		while True:
-			data = conn.recv(64)
-			if not data:
-				print 'Connection closed'
-				break;
-			else:
-				#print 'Recv: ' + data
-				name = data[:32].lstrip().rstrip()
-				unstrip_value = data[32:].strip('\0')
-				value = unstrip_value.lstrip().rstrip()
-				#print name
-				#print unstrip_value
-				#print value
-
-				if not name:
-					print 'No data available'
-					break;
-				else:
-					if name == 'sensor_temp':
-						#print 'temperature: ' + str(temperature)
-						conn.send(str(temperature))
-					elif name == 'sensor_humidity':
-						#print 'humidity: ' + str(humidity)
-						conn.send(str(humidity))
-					elif name == 'sensor_light':
-						print 'light: ' + str(light)
-						conn.send(str(light))
-					elif name == 'sensor_sound':
-						#print 'sound: ' + str(sound)
-						conn.send(str(sound))
-					elif name == 'led_write_red':
-						if not value:
-							print 'wrong message format: ' + data
-						else:
-							print 'led red: ' + value
-							led_red = int(value)
-							write_list.append(t_write_led_red)
-					elif name == 'led_write_green':
-						if not value:
-							print 'wrong message format: ' + data
-						else:
-							print 'led green: ' + value
-							led_green = int(value)
-							write_list.append(t_write_led_green)
-					elif name == 'led_write_blue':
-						if not value:
-							print 'wrong message format: ' + data
-						else:
-							print 'led blue: ' + value
-							led_blue = int(value)
-							write_list.append(t_write_led_blue)
-					elif name == 'lcd_write':
-						if not value:
-							print 'wrong message format: ' + data
-						else:
-							print 'lcd string: ' + unstrip_value
-							lcd = unstrip_value
-							write_list.append(t_write_lcd)
-					elif name == 'buzzer_write':
-						if not value:
-							print 'wrong message format: ' + data
-						else:
-							print 'buzzer: ' + value
-							buzzer = float(value)
-							write_list.append(t_write_buzzer)
-					elif name == 'button_read':
-						#print 'button: ' + str(button)
-						conn.send(str(button))
-					elif name == 'ultrasonic_read':
-						#print 'ultrasonic: ' + str(ultrasonic)
-						conn.send(str(ultrasonic))
+		print 'Create a thread to handle this connection'
+		client_thread = Thread(target=clientThread, args=(conn,))
+		client_thread.daemon = True
+		client_thread.start()
 
 
 	serversocket.close()
