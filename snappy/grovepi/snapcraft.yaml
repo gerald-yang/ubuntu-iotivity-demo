@@ -1,5 +1,5 @@
 name: demo-grovepi-server
-version: 1.0.2
+version: 1.0.3
 vendor: Gerald Yang <gerald.yang@canonical.com>
 summary: A python server which provides access to sensors and devices on Grovepi
 description: A python server controls all Grovepi sensors and devices, and create a socket for Iotivity demo server
