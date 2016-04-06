@@ -142,35 +142,35 @@ def clientThread(conn):
 					if not value:
 						print 'wrong message format: ' + data
 					else:
-						print 'led red: ' + value
+						#print 'led red: ' + value
 						led_red = int(value)
 						write_list.append(t_write_led_red)
 				elif name == 'led_write_green':
 					if not value:
 						print 'wrong message format: ' + data
 					else:
-						print 'led green: ' + value
+						#print 'led green: ' + value
 						led_green = int(value)
 						write_list.append(t_write_led_green)
 				elif name == 'led_write_blue':
 					if not value:
 						print 'wrong message format: ' + data
 					else:
-						print 'led blue: ' + value
+						#print 'led blue: ' + value
 						led_blue = int(value)
 						write_list.append(t_write_led_blue)
 				elif name == 'lcd_write':
 					if not value:
 						print 'wrong message format: ' + data
 					else:
-						print 'lcd string: ' + unstrip_value
+						#print 'lcd string: ' + unstrip_value
 						lcd = unstrip_value
 						write_list.append(t_write_lcd)
 				elif name == 'buzzer_write':
 					if not value:
 						print 'wrong message format: ' + data
 					else:
-						print 'buzzer: ' + value
+						#print 'buzzer: ' + value
 						buzzer = float(value)
 						write_list.append(t_write_buzzer)
 				elif name == 'button_read':
