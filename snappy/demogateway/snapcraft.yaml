@@ -1,5 +1,5 @@
 name: demo-iotivity-gateway
-version: 1.0.4
+version: 1.0.5
 vendor: Gerald Yang <gerald.yang@canonical.com>
 architectures: [amd64, armhf]
 summary: An Iotivity demo gateway displays and controls sensors and devices

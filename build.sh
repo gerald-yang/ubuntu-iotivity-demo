@@ -74,7 +74,7 @@ if [ "$TARGET" == "all" ]; then
 elif [ "$1" == "demo" ]; then
 	cd $IOTIVITY && scons -j$CORE TARGET_ARCH=$ARCH TARGET_OS=linux ubuntu-demo
 elif [ "$1" == "demo-snappy" ]; then
-	if [ "$ARCH" == x86_64 ]; then
+	if [ "$ARCH" == "x86_64" ]; then
 		cp -f $IOTIVITY/out/linux/$ARCH/release/*.so $DEMOROOT/snappy/nucdemo/lib/
 		cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo $DEMOROOT/snappy/nucdemo/
 		cd $DEMOROOT/snappy/nucdemo && $SNAPCRAFT clean && $SNAPCRAFT
@@ -82,6 +82,12 @@ elif [ "$1" == "demo-snappy" ]; then
 	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/demogateway/lib/$MAGIC_BIN/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway $DEMOROOT/snappy/demogateway/magic-bin/$MAGIC_BIN/
 	cd $DEMOROOT/snappy/demogateway && $SNAPCRAFT clean && $SNAPCRAFT
+	if [ "$ARCH" == "armeabi-v7a-hard" ]; then
+		cp -f $DEMOROOT/grovepi/grovepi-server.py $DEMOROOT/snappy/grovepi/
+		cp -rf $DEMOROOT/grovepi/pygrovepi $DEMOROOT/snappy/grovepi/
+		cd $DEMOROOT/snappy/grovepi && $SNAPCRAFT clean && $SNAPCRAFT
+	fi
+
 elif [ "$1" == "clean" ]; then
 	cd $IOTIVITY && scons -c TARGET_ARCH=$ARCH TARGET_OS=linux
 fi

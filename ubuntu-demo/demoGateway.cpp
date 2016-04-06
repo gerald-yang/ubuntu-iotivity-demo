@@ -584,6 +584,20 @@ void rule3(RpiSensorNode& sensor, InfluxDB& db)
 	db.writeDB("fukuoka", "sound", sensor.sound);
 }
 
+bool rule4_condition(LcdNode& lcd)
+{
+	if(lcd.found())
+		return true;
+	else
+		return false;
+}
+
+bool rule4_init_done = false;
+void rule4_init(LcdNode& lcd)
+{
+	lcd.put(false);
+}
+
 int main(int argc, char* argv[])
 {
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
@@ -597,14 +611,6 @@ int main(int argc, char* argv[])
 
 	// Wait for specific network interface up
 	cout << "Waiting for network interface: " << argv[1] << endl;
-#if 0
-	host_ip = wait_for_network_ip(netif);
-	if(host_ip == "IP error") {
-		cout << "Network interface " << argv[1] << " is not available" << endl;
-		return 1;
-	}
-	cout << netif << " is up" << endl;
-#else
 	if(wait_for_network_ping()) {
 		host_ip = wait_for_network_ip(netif);
 		if(host_ip == "IP error") {
@@ -615,7 +621,6 @@ int main(int argc, char* argv[])
 		cout << "network is unavailable" << endl;
 		return -1;
 	}
-#endif
 	sleep(2);
 	cout << "network is available, IP: " << host_ip << endl;
 
@@ -703,6 +708,12 @@ int main(int argc, char* argv[])
 
 			if(rule3_condition(rpiSensor)) {
 				rule3(rpiSensor, db);
+			}
+
+			if(rule4_condition(lcd)) {
+				if(!rule4_init_done) {
+					rule4_init(lcd);
+				}
 			}
 
 			sleep(1);
