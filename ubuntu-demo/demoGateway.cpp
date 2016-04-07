@@ -33,6 +33,7 @@ using namespace OC;
 
 int debug_mode;
 
+#if 0
 static void printMenu()
 {
 	cout << "Demo gateway debug menu" << endl;
@@ -115,7 +116,6 @@ void *find_all_resource(void *)
 	return NULL;
 }
 
-#if 0
 string trim(string& str)
 {
 	size_t first = str.find_first_not_of(' ');

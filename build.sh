@@ -79,7 +79,7 @@ elif [ "$1" == "demo-snappy" ]; then
 		cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/nucdemo $DEMOROOT/snappy/nucdemo/
 		cd $DEMOROOT/snappy/nucdemo && $SNAPCRAFT clean && $SNAPCRAFT
 	fi
-	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so snappy/demogateway/lib/$MAGIC_BIN/
+	cp -f $IOTIVITY/out/linux/$ARCH/release/*.so $DEMOROOT/snappy/demogateway/lib/$MAGIC_BIN/
 	cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demogateway $DEMOROOT/snappy/demogateway/magic-bin/$MAGIC_BIN/
 	cd $DEMOROOT/snappy/demogateway && $SNAPCRAFT clean && $SNAPCRAFT
 	if [ "$ARCH" == "armeabi-v7a-hard" ]; then
