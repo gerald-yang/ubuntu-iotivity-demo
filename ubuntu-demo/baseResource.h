@@ -29,7 +29,7 @@ namespace PH = std::placeholders;
 class BaseResource
 {
 public:
-	BaseResource(string _resourceName, string _uniqueID, string _resourceUri, string _resourceTypeName, bool _isSecure);
+	BaseResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure);
 
 	void createResource();
 	virtual void put(OCRepresentation&) = 0;

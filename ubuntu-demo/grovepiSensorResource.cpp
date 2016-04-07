@@ -13,7 +13,16 @@ void GrovepiSensorResource::get()
 {
 	debugPrint({"in GET"});
 	debugPrint({"temperature: ", to_string(temperature)});
+
+	server_read("sensor_temp", temperature);
+	server_read("sensor_humidity", humidity);
+	server_read("sensor_light", light);
+	server_read("sensor_sound", sound);
+
 	rep.setValue("temperature", temperature);
+	rep.setValue("humidity", humidity);
+	rep.setValue("light", light);
+	rep.setValue("sound", sound);
 }
 
 void GrovepiSensorResource::put(OCRepresentation& recv_rep)

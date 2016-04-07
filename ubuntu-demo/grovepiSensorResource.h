@@ -18,6 +18,9 @@ public:
 		: GrovepiResource(_uniqueID, _resourceName, _resourceUri, _resourceTypeName, _isSecure, _port) 
 	{
 		temperature = 0.0;
+		humidity = 0.0;
+		light = 0;
+		sound = 0;
 	};
 
 	void get();

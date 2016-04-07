@@ -828,7 +828,15 @@ int main(int argc, char* argv[])
 	OCPlatform::Configure(cfg);
 	cout << "done" << endl;
 
-	//GrovepiSensorResource ;
+	GrovepiSensorResource sensor("", "Grovepi sensors", "/grovepi/sensor", "grovepi.sensor", false, 5566);
+
+	cout << "Connecting to Grovepi server ..." << endl;
+	sensor.server_connect();
+	cout << "Connected" << endl;
+
+	cout << "Creating resources ..." << endl;
+	sensor.createResource();
+	cout << "Resources have been created" << endl;
 #if 0
 
 	try {

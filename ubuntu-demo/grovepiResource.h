@@ -41,9 +41,6 @@ public:
 	int server_write(const char *name, const char *str);
 
 protected:
-	bool debugEnable;
-	void debugPrint(initializer_list<string> list);
-	string debugInfo;
 
 	int port;
 	struct sockaddr_in serv_addr;
