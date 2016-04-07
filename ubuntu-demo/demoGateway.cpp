@@ -526,6 +526,8 @@ void rule1_init(RpiSensorNode& sensor, LedNode& led)
 	}
 
 	led.put(false);
+
+	rule1_init_done = true;
 }
 
 void rule1_loop(RpiSensorNode& sensor, LedNode& led)
@@ -558,6 +560,8 @@ void rule2_init(RpiSensorNode& sensor, LedNode& led)
 		led.blue = 1;
 
 	led.put(false);
+
+	rule2_init_done = true;
 }
 
 void rule2_loop(RpiSensorNode& sensor, LedNode& led)
@@ -596,6 +600,7 @@ bool rule4_init_done = false;
 void rule4_init(LcdNode& lcd)
 {
 	lcd.put(false);
+	rule4_init_done = true;
 }
 
 int main(int argc, char* argv[])
@@ -685,15 +690,20 @@ int main(int argc, char* argv[])
 		cout << "Run all rules" << endl;
 
 		while(true) {
-			rpiSensor.get(false);
-			ultrasonic.get(false);
+			// Get sensor data if sensors are found
+			if(rpiSensor.found())
+				rpiSensor.get(false);
 
+			if(ultrasonic.found())
+				ultrasonic.get(false);
+
+
+			// All rules
 			if(rule1_condition(rpiSensor, led)) {
 				if(rule1_init_done) {
 					rule1_loop(rpiSensor, led);
 				} else {
 					rule1_init(rpiSensor, led);
-					rule1_init_done = true;
 				}
 			}
 
@@ -702,7 +712,6 @@ int main(int argc, char* argv[])
 					rule2_loop(rpiSensor, led);
 				} else {
 					rule2_init(rpiSensor, led);
-					rule2_init_done = true;
 				}
 			}
 
