@@ -82,7 +82,7 @@ demogateway = demo_env.Program('demogateway', ['demoGateway.cpp',
 'buttonNode.cpp', 'ultrasonicNode.cpp', 'influxDB.cpp'])
 
 demoServer = demo_env.Program('demoserver', ['demoServer.cpp',
-'baseResource.cpp', 'sensorResource.cpp', 'grovepiSensorResource.cpp', 'ledResource.cpp', 'lcdResource.cpp',
+'baseResource.cpp', 'sensorResource.cpp', 'grovepiSensorResource.cpp', 'grovepiLedResource.cpp', 'lcdResource.cpp',
 'buttonResource.cpp', 'buzzerResource.cpp', 'groveUltrasonicResource.cpp', 'grovepiResource.cpp'])
 
 nucdemo = demo_env.Program('nucdemo', ['nucdemo.cpp', 

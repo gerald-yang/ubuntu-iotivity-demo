@@ -7,6 +7,7 @@
 #include "OCApi.h"
 
 #include "grovepiSensorResource.h"
+#include "grovepiLedResource.h"
 
 using namespace OC;
 using namespace std;
@@ -829,13 +830,16 @@ int main(int argc, char* argv[])
 	cout << "done" << endl;
 
 	GrovepiSensorResource sensor("", "Grovepi sensors", "/grovepi/sensor", "grovepi.sensor", false, 5566);
+	GrovepiLedResource led("", "Grovepi red LED", "/grovepi/led", "grovepi.led", false, 5566);
 
 	cout << "Connecting to Grovepi server ..." << endl;
 	sensor.server_connect();
+	led.server_connect();
 	cout << "Connected" << endl;
 
 	cout << "Creating resources ..." << endl;
 	sensor.createResource();
+	led.createResource();
 	cout << "Resources have been created" << endl;
 
 	// A condition variable will free the mutex it is given, then do a non-

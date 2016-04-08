@@ -13,6 +13,9 @@ void GrovepiSensorResource::get()
 {
 	debugPrint({"in GET"});
 	debugPrint({"temperature: ", to_string(temperature)});
+	debugPrint({"humidity: ", to_string(humidity)});
+	debugPrint({"light: ", to_string(light)});
+	debugPrint({"sound: ", to_string(sound)});
 
 	server_read("sensor_temp", temperature);
 	server_read("sensor_humidity", humidity);
