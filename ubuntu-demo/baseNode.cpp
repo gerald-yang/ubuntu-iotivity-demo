@@ -9,9 +9,9 @@
 #include "baseNode.h"
 
 
-BaseNode::BaseNode(string _requestName, string _requestUri)
+BaseNode::BaseNode(string _requestName, string _requestType)
 {
-	requestUri << OC_RSRVD_WELL_KNOWN_URI << "?rt=" << _requestUri;
+	requestType << OC_RSRVD_WELL_KNOWN_URI << "?rt=" << _requestType;
 	requestName = _requestName;
 	resourceHandle = NULL;
 
@@ -55,7 +55,7 @@ void BaseNode::startFindResource()
 void BaseNode::findResource()
 {
 	while(resourceHandle == NULL) {
-		OCPlatform::findResource("", requestUri.str(), CT_DEFAULT, fcb);
+		OCPlatform::findResource("", requestType.str(), CT_DEFAULT, fcb);
 		sleep(6);
 	}
 }

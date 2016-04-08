@@ -29,7 +29,7 @@ namespace PH = std::placeholders;
 class BaseNode
 {
 public:
-	BaseNode(string _requestName, string _requestUri);
+	BaseNode(string _requestName, string _requestType);
 	~BaseNode();
 
 	void debugPrint(initializer_list <string> list);
@@ -48,7 +48,7 @@ public:
 	void virtual onPutCheck(OCRepresentation rep);
 
 protected:
-	ostringstream requestUri;
+	ostringstream requestType;
 	string requestName;
 	shared_ptr<OCResource> resourceHandle;
 	string hostAddress;
