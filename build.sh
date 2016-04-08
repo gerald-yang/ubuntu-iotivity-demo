@@ -86,6 +86,9 @@ elif [ "$1" == "demo-snappy" ]; then
 		cp -f $DEMOROOT/grovepi/grovepi-server.py $DEMOROOT/snappy/grovepi/
 		cp -rf $DEMOROOT/grovepi/pygrovepi $DEMOROOT/snappy/grovepi/
 		cd $DEMOROOT/snappy/grovepi && $SNAPCRAFT clean && $SNAPCRAFT
+		cp -f $IOTIVITY/out/linux/$ARCH/release/*.so $DEMOROOT/snappy/demoserver/lib/
+		cp -f $IOTIVITY/out/linux/$ARCH/release/ubuntu-demo/demoserver $DEMOROOT/snappy/demoserver/
+		cd $DEMOROOT/snappy/demoserver && $SNAPCRAFT clean && $SNAPCRAFT
 	fi
 
 elif [ "$1" == "clean" ]; then
