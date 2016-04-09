@@ -6,13 +6,20 @@
 //
 //******************************************************************
 
-#include "groveUltrasonicResource.h"
+#include "grovepiUltrasonicResource.h"
 
 
-void GroveUltrasonicResource::get()
+void GrovepiUltrasonicResource::get()
 {
 	debugPrint({"in GET"});
 	debugPrint({"ultrasonic: ", to_string(ultrasonic)});
+
+	server_read("ultrasonic_read", ultrasonic);
+
 	rep.setValue("ultrasonic", ultrasonic);
 }
 
+void GrovepiUltrasonicResource::put(OCRepresentation& recv_rep)
+{
+	cout << debugInfo << "Un-support request PUT" << endl;
+}

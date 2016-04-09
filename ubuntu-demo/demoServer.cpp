@@ -8,6 +8,8 @@
 
 #include "grovepiSensorResource.h"
 #include "grovepiLedResource.h"
+#include "grovepiLcdResource.h"
+#include "grovepiUltrasonicResource.h"
 
 using namespace OC;
 using namespace std;
@@ -830,17 +832,27 @@ int main(int argc, char* argv[])
 	cout << "done" << endl;
 
 	GrovepiSensorResource sensor("", "Grovepi sensors", "/grovepi/sensor", "grovepi.sensor", false, 5566);
-	GrovepiLedResource led("", "Grovepi red LED", "/grovepi/led", "grovepi.led", false, 5566);
+	GrovepiLedResource led("", "Grovepi LEDs", "/grovepi/led", "grovepi.led", false, 5566);
+	GrovepiLcdResource lcd("", "Grovepi LCD", "/grovepi/lcd", "grovepi.lcd", false, 5566);
+	GrovepiUltrasonicResource ultrasonic("", "Grovepi ultrasonic", "/grovepi/ultrasonic", "grovepi.ultrasonic", false, 5566);
 
 	cout << "Connecting to Grovepi server ..." << endl;
 	sensor.server_connect();
 	led.server_connect();
+	lcd.server_connect();
+	ultrasonic.server_connect();
 	cout << "Connected" << endl;
 
 	cout << "Creating resources ..." << endl;
 	sensor.createResource();
 	led.createResource();
+	lcd.createResource();
+	ultrasonic.createResource();
 	cout << "Resources have been created" << endl;
+
+
+	// Display IP address on LCD
+	lcd.server_write("lcd_write", host_ip.c_str());
 
 	// A condition variable will free the mutex it is given, then do a non-
 	// intensive block until 'notify' is called on it.  In this case, since we
