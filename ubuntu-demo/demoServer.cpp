@@ -9,6 +9,7 @@
 #include "grovepiSensorResource.h"
 #include "grovepiLedResource.h"
 #include "grovepiLcdResource.h"
+#include "grovepiButtonResource.h"
 #include "grovepiUltrasonicResource.h"
 
 using namespace OC;
@@ -834,12 +835,14 @@ int main(int argc, char* argv[])
 	GrovepiSensorResource sensor("", "Grovepi sensors", "/grovepi/sensor", "grovepi.sensor", false, 5566);
 	GrovepiLedResource led("", "Grovepi LEDs", "/grovepi/led", "grovepi.led", false, 5566);
 	GrovepiLcdResource lcd("", "Grovepi LCD", "/grovepi/lcd", "grovepi.lcd", false, 5566);
+	GrovepiButtonResource button("", "Grovepi button", "/grovepi/button", "grovepi.button", false, 5566);
 	GrovepiUltrasonicResource ultrasonic("", "Grovepi ultrasonic", "/grovepi/ultrasonic", "grovepi.ultrasonic", false, 5566);
 
 	cout << "Connecting to Grovepi server ..." << endl;
 	sensor.server_connect();
 	led.server_connect();
 	lcd.server_connect();
+	button.server_connect();
 	ultrasonic.server_connect();
 	cout << "Connected" << endl;
 
@@ -847,6 +850,7 @@ int main(int argc, char* argv[])
 	sensor.createResource();
 	led.createResource();
 	lcd.createResource();
+	button.createResource();
 	ultrasonic.createResource();
 	cout << "Resources have been created" << endl;
 
