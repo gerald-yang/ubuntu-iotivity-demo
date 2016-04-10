@@ -21,5 +21,12 @@ void GrovepiUltrasonicResource::get()
 
 void GrovepiUltrasonicResource::put(OCRepresentation& recv_rep)
 {
-	cout << debugInfo << "Un-support request PUT" << endl;
+	string host = recv_rep.getHost();
+	cout << debugInfo << "from " << host << ", Un-supported request PUT" << endl;
+}
+
+bool GrovepiUltrasonicResource::observeNeedNotification()
+{
+	cout << debugInfo << "Un-supported request OBSERVE" << endl;
+	return false;
 }

@@ -11,6 +11,9 @@
 void LedResource::put(OCRepresentation& recv_rep)
 {
 	int temp;
+	
+	debugPrint({"in PUT"});
+
 	recv_rep.getValue("status", temp);
 	if(temp < low || temp > high) {
 		cout << debugInfo << "value " << temp << " is not valid" << endl;
@@ -19,7 +22,6 @@ void LedResource::put(OCRepresentation& recv_rep)
 
 	status = temp;
 
-	debugPrint({"in PUT"});
 	return;
 }
 

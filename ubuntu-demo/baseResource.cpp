@@ -18,6 +18,8 @@ BaseResource::BaseResource(string _uniqueID, string _resourceName, string _resou
 	resourceTypeName = _resourceTypeName;
 	isSecure = _isSecure;
 
+	observeThreadStart = false;
+
 	rep.setUri(resourceUri.c_str());
 
 	debugEnable = true;
@@ -53,6 +55,26 @@ void BaseResource::createResource()
 
 	if (OC_STACK_OK != result) {
 		cout << debugInfo << "Resource creation was unsuccessful" << endl;
+	}
+}
+
+void BaseResource::observeFunc()
+{
+	while(true) {
+		if(observeNeedNotification()) {
+
+			debugPrint({"Notifying observers"});
+
+			OCStackResult result = OC_STACK_OK;
+
+			result = OCPlatform::notifyAllObservers(resourceHandle);
+
+			if(OC_STACK_NO_OBSERVERS == result) {
+				cout << debugInfo << "No More observers, stopping notifications" << endl;
+				observeThreadStart = false;
+				break;
+			}
+		}
 	}
 }
 
@@ -111,39 +133,33 @@ OCEntityHandlerResult BaseResource::entityHandler(shared_ptr<OCResourceRequest> 
 			}
 		}
 
-#if 0
 		if(requestFlag & RequestHandlerFlag::ObserverFlag)
 		{
 			ObservationInfo observationInfo = request->getObservationInfo();
 			if(ObserveAction::ObserveRegister == observationInfo.action)
 			{
-				m_interestedObservers.push_back(observationInfo.obsId);
+				observers.push_back(observationInfo.obsId);
 			}
 			else if(ObserveAction::ObserveUnregister == observationInfo.action)
 			{
-				m_interestedObservers.erase(remove(
-					m_interestedObservers.begin(),
-					m_interestedObservers.end(),
+				observers.erase(remove(
+					observers.begin(),
+					observers.end(),
 					observationInfo.obsId),
-					m_interestedObservers.end());
+					observers.end());
 			}
 
-			pthread_t threadId;
+			cout << debugInfo << "requestFlag : Observer" << endl;
 
-			cout << "\t\trequestFlag : Observer\n";
-			gObservation = 1;
-			static int startedThread = 0;
-
-			// Observation happens on a different thread in ChangeLightRepresentation function.
+			// Observation happens on a different thread function.
 			// If we have not created the thread already, we will create one here.
-			if(!startedThread)
-			{
-				pthread_create (&threadId, NULL, ChangeLightRepresentation, (void *)this);
-				startedThread = 1;
+			if(!observeThreadStart) {
+				observeThread = new thread(&BaseResource::observeFunc, this);
+				observeThreadStart = true;
 			}
+
 			ehResult = OC_EH_OK;
 		}
-#endif
 	} else {
 		cout << debugInfo << "Request invalid" << endl;
 	}

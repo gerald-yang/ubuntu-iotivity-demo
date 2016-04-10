@@ -32,6 +32,7 @@ public:
 
 	virtual void get() = 0;
 	virtual void put(OCRepresentation& recv_rep) = 0;
+	virtual bool observeNeedNotification() = 0;
 
 	int server_connect();
 	int server_read(const char *name, double& value);

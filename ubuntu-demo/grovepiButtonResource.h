@@ -6,28 +6,26 @@
 //
 //******************************************************************
 
-#ifndef GROVEPILEDRESOURCE_H
-#define GROVEPILEDRESOURCE_H
+#ifndef GROVEPIBUTTONRESOURCE_H
+#define GROVEPIBUTTONRESOURCE_H
 
 #include "grovepiResource.h"
 
-class GrovepiLedResource : public GrovepiResource
+class GrovepiButtonResource : public GrovepiResource
 {
 public:
-	GrovepiLedResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure, int _port) 
+	GrovepiButtonResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure, int _port) 
 		: GrovepiResource(_uniqueID, _resourceName, _resourceUri, _resourceTypeName, _isSecure, _port) 
 	{
-		red = 0;
-		green = 0;
-		blue = 0;
+		button = 0;
+		buttonPrev = 0;
 	};
 
 	void get();
 	void put(OCRepresentation& recv_rep);
 	bool observeNeedNotification();
-	int red;
-	int green;
-	int blue;
+	int button;
+	int buttonPrev;
 };
 
 #endif

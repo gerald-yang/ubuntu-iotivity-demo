@@ -19,6 +19,7 @@ public:
 
 	virtual void get() = 0;
 	void put(OCRepresentation& recv_rep);
+	bool observeNeedNotification();
 };
 
 #endif

@@ -11,7 +11,7 @@
 
 void GrovepiLedResource::get()
 {
-	cout << debugInfo << "Un-support request GET" << endl;
+	cout << debugInfo << "Un-supported request GET" << endl;
 }
 
 void GrovepiLedResource::put(OCRepresentation& recv_rep)
@@ -29,4 +29,10 @@ void GrovepiLedResource::put(OCRepresentation& recv_rep)
 	server_write("led_write_red", red);
 	server_write("led_write_green", green);
 	server_write("led_write_blue", blue);
+}
+
+bool GrovepiLedResource::observeNeedNotification()
+{
+	cout << debugInfo << "Un-supported request OBSERVE" << endl;
+	return false;
 }

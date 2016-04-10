@@ -30,5 +30,12 @@ void GrovepiSensorResource::get()
 
 void GrovepiSensorResource::put(OCRepresentation& recv_rep)
 {
-	cout << debugInfo << "Un-support request PUT" << endl;
+	string host = recv_rep.getHost();
+	cout << debugInfo << "from " << host << ", Un-supported request PUT for sensor" << endl;
+}
+
+bool GrovepiSensorResource::observeNeedNotification()
+{
+	cout << debugInfo << "Un-supported request OBSERVE" << endl;
+	return false;
 }

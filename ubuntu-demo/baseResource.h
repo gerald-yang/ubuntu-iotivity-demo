@@ -14,10 +14,9 @@
 #include <initializer_list>
 #include <iostream>
 #include <fstream>
+#include <thread>
 #include <mutex>
 #include <condition_variable>
-
-#include <pthread.h>
 
 #include "OCPlatform.h"
 #include "OCApi.h"
@@ -34,6 +33,7 @@ public:
 	void createResource();
 	virtual void put(OCRepresentation&) = 0;
 	virtual void get() = 0;
+	virtual bool observeNeedNotification() = 0;
 
 	void debugPrint(initializer_list<string> list);
 
@@ -51,6 +51,10 @@ protected:
 
 	OCResourceHandle resourceHandle;
 	OCRepresentation rep;
+
+	bool observeThreadStart;
+	thread *observeThread;
+	void observeFunc();
 	ObservationIds observers;
 
 	EntityHandler cb;

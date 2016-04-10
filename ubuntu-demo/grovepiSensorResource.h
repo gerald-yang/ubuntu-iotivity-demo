@@ -25,6 +25,7 @@ public:
 
 	void get();
 	void put(OCRepresentation& recv_rep);
+	bool observeNeedNotification();
 	double temperature;
 	double humidity;
 	int light;

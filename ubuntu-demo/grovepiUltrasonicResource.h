@@ -22,6 +22,7 @@ public:
 
 	void get();
 	void put(OCRepresentation& recv_rep);
+	bool observeNeedNotification();
 	int ultrasonic;
 };
 
