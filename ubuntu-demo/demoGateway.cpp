@@ -603,6 +603,20 @@ void rule4_init(LcdNode& lcd)
 	rule4_init_done = true;
 }
 
+int rule5_button = 0;
+void rule5_loop(LcdNode& lcd, ButtonNode& button)
+{
+	if(rule4_init_done && button.found()) {
+		if(rule5_button != button.button) {
+			rule5_button = button.button;
+			lcd.lcd.resize(16, ' ');
+			lcd.lcd += "button: ";
+			lcd.lcd += to_string(button.button);
+			lcd.put(false);
+		}
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
@@ -672,8 +686,12 @@ int main(int argc, char* argv[])
 	button.startFindResource();
 
 	lcd.lcd = host_ip;
+	lcd.lcd.resize(16, ' ');
+	lcd.lcd += "button: ";
+	lcd.lcd += to_string(rule5_button);
 
 	button.observe(true, true);
+	rule5_button = button.button;
 
 	// Main loop
 	if(debug_mode) {
@@ -724,6 +742,8 @@ int main(int argc, char* argv[])
 					rule4_init(lcd);
 				}
 			}
+
+			rule5_loop(lcd, button);
 
 			sleep(1);
 		}
