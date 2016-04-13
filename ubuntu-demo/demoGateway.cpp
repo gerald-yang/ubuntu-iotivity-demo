@@ -538,12 +538,14 @@ void rule0_loop()
 		ultrasonic.get(false);
 	}
 
+#if 0
 	if(rpiLed.found()) {
 		rpiLed.get(false);
 		gwLed.red = rpiLed.red;
 		gwLed.green = rpiLed.green;
 		gwLed.blue = rpiLed.blue;
 	}
+#endif
 }
 
 bool rule1_condition()
@@ -660,6 +662,8 @@ void rule6_loop()
 			lcd.lcd += "button: ";
 			lcd.lcd += to_string(button.button);
 			lcd.put(false);
+
+			gwButton.button = button.button;
 		}
 	}
 }
@@ -683,7 +687,7 @@ void startServer()
 		}
 
 		if(button.found() && !gwButton.isCreated()) {
-			//gwButton.createResource();
+			gwButton.createResource();
 		}
 	}
 }

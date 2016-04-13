@@ -17,8 +17,6 @@ void ButtonResource::get()
 
 bool ButtonResource::observeNeedNotification(void)
 {
-	rep.getValue("button", button);
-
 	if(button != buttonPrev) {
 		buttonPrev = button;
 		return true;
