@@ -6,15 +6,15 @@
 //
 //******************************************************************
 
-#ifndef LEDNODE_H
-#define LEDNODE_H
+#ifndef RPILEDNODE_H
+#define RPILEDNODE_H
 
 #include "baseNode.h"
 
-class LedNode : public BaseNode
+class RpiLedNode : public BaseNode
 {
 public:
-	LedNode(string _requestName, string _requestUri) 
+	RpiLedNode(string _requestName, string _requestUri) 
 		: BaseNode(_requestName, _requestUri) 
 	{
 		red = 0;

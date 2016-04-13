@@ -6,19 +6,19 @@
 //
 //******************************************************************
 
-#include "ledNode.h"
+#include "rpiLedNode.h"
 
-bool LedNode::getEnable()
+bool RpiLedNode::getEnable()
 {
 	return false;
 }
 
-bool LedNode::putEnable()
+bool RpiLedNode::putEnable()
 {
 	return true;
 }
 
-void LedNode::putDataToRep(OCRepresentation& rep)
+void RpiLedNode::putDataToRep(OCRepresentation& rep)
 {
 	rep.setValue("red", red);
 	rep.setValue("green", green);

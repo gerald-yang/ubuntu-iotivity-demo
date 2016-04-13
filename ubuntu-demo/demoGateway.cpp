@@ -23,7 +23,7 @@
 
 #include "influxDB.h"
 #include "rpiSensorNode.h"
-#include "ledNode.h"
+#include "rpiLedNode.h"
 #include "lcdNode.h"
 #include "ultrasonicNode.h"
 #include "buttonNode.h"
@@ -506,7 +506,7 @@ static FILE* client_open(const char* /*path*/, const char *mode)
 }
 
 
-bool rule1_condition(RpiSensorNode& sensor, LedNode& led)
+bool rule1_condition(RpiSensorNode& sensor, RpiLedNode& led)
 {
 	if(sensor.found() && led.found())
 		return true;
@@ -515,7 +515,7 @@ bool rule1_condition(RpiSensorNode& sensor, LedNode& led)
 }
 
 bool rule1_init_done = false;
-void rule1_init(RpiSensorNode& sensor, LedNode& led)
+void rule1_init(RpiSensorNode& sensor, RpiLedNode& led)
 {
 	if(sensor.temperature >= 25) {
 		led.red = 1;
@@ -530,7 +530,7 @@ void rule1_init(RpiSensorNode& sensor, LedNode& led)
 	rule1_init_done = true;
 }
 
-void rule1_loop(RpiSensorNode& sensor, LedNode& led)
+void rule1_loop(RpiSensorNode& sensor, RpiLedNode& led)
 {
 	if(sensor.temperature >= 25 && (led.green == 1 || led.red == 0)) {
 		led.red = 1;
@@ -543,7 +543,7 @@ void rule1_loop(RpiSensorNode& sensor, LedNode& led)
 	}
 }
 
-bool rule2_condition(RpiSensorNode& sensor, LedNode& led)
+bool rule2_condition(RpiSensorNode& sensor, RpiLedNode& led)
 {
 	if(sensor.found() && led.found())
 		return true;
@@ -552,7 +552,7 @@ bool rule2_condition(RpiSensorNode& sensor, LedNode& led)
 }
 
 bool rule2_init_done = false;
-void rule2_init(RpiSensorNode& sensor, LedNode& led)
+void rule2_init(RpiSensorNode& sensor, RpiLedNode& led)
 {
 	if(sensor.light >= 500)
 		led.blue = 0;
@@ -564,7 +564,7 @@ void rule2_init(RpiSensorNode& sensor, LedNode& led)
 	rule2_init_done = true;
 }
 
-void rule2_loop(RpiSensorNode& sensor, LedNode& led)
+void rule2_loop(RpiSensorNode& sensor, RpiLedNode& led)
 {
 	if(sensor.light >= 500 && led.blue == 1) {
 		led.blue = 0;
@@ -617,9 +617,21 @@ void rule5_loop(LcdNode& lcd, ButtonNode& button)
 	}
 }
 
+
+// Client
+RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
+RpiLedNode led("RPI2 LEDs", "grovepi.led");
+LcdNode lcd("RPI2 LCD", "grovepi.lcd");
+UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
+ButtonNode button("RPI2 button", "grovepi.button");
+
+// server
+
+
+
 int main(int argc, char* argv[])
 {
-	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink };
+	OCPersistentStorage ps {client_open, fread, fwrite, fclose, unlink};
 	string host_ip;
 	string netif = argv[1];
 
@@ -673,11 +685,6 @@ int main(int argc, char* argv[])
 
 
 	cout << "Starting client" << endl;
-	RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
-	LedNode led("RPI2 LEDs", "grovepi.led");
-	LcdNode lcd("RPI2 LCD", "grovepi.lcd");
-	UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
-	ButtonNode button("RPI2 button", "grovepi.button");
 
 	rpiSensor.startFindResource();
 	led.startFindResource();
