@@ -38,6 +38,19 @@ using namespace OC;
 
 int debug_mode;
 
+// Client
+RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
+RpiLedNode rpiLed("RPI2 LEDs", "grovepi.led");
+LcdNode lcd("RPI2 LCD", "grovepi.lcd");
+UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
+ButtonNode button("RPI2 button", "grovepi.button");
+
+// server
+RpiSensorResource gwSensor("", "Gateway sensors", "/gateway/sensorp", "gateway.sensorp", false);
+RpiLedResource gwLed("", "Gateway LEDs", "/gateway/ledp", "gateway.ledp", false);
+LcdResource gwLcd("", "Gateway LCD", "/gateway/lcdp", "gateway.lcdp", false, 2, 16);
+ButtonResource gwButton("", "Gateway button", "/gateway/buttonp", "gateway.buttonp", false);
+
 #if 0
 static void printMenu()
 {
@@ -510,90 +523,112 @@ static FILE* client_open(const char* /*path*/, const char *mode)
 	return fopen("./oic_svr_db_client.json", mode);
 }
 
-
-bool rule1_condition(RpiSensorNode& sensor, RpiLedNode& led)
+void rule0_loop()
 {
-	if(sensor.found() && led.found())
+	// Get sensor data if sensors are found
+	if(rpiSensor.found()) {
+		rpiSensor.get(false);
+		gwSensor.temperature = rpiSensor.temperature;
+		gwSensor.humidity = rpiSensor.humidity;
+		gwSensor.light = rpiSensor.light;
+		gwSensor.sound = rpiSensor.sound;
+	}
+
+	if(ultrasonic.found()) {
+		ultrasonic.get(false);
+	}
+
+	if(rpiLed.found()) {
+		rpiLed.get(false);
+		gwLed.red = rpiLed.red;
+		gwLed.green = rpiLed.green;
+		gwLed.blue = rpiLed.blue;
+	}
+}
+
+bool rule1_condition()
+{
+	if(rpiSensor.found() && rpiLed.found())
 		return true;
 	else
 		return false;
 }
 
 bool rule1_init_done = false;
-void rule1_init(RpiSensorNode& sensor, RpiLedNode& led)
+void rule1_init()
 {
-	if(sensor.temperature >= 25) {
-		led.red = 1;
-		led.green = 0;
+	if(rpiSensor.temperature >= 25) {
+		rpiLed.red = 1;
+		rpiLed.green = 0;
 	} else {
-		led.red = 0;
-		led.green = 1;
+		rpiLed.red = 0;
+		rpiLed.green = 1;
 	}
 
-	led.put(false);
+	rpiLed.put(false);
 
 	rule1_init_done = true;
 }
 
-void rule1_loop(RpiSensorNode& sensor, RpiLedNode& led)
+void rule1_loop()
 {
-	if(sensor.temperature >= 25 && (led.green == 1 || led.red == 0)) {
-		led.red = 1;
-		led.green = 0;
-		led.put(false);
-	} else if(sensor.temperature < 25 && (led.green == 0 || led.red == 1)) {
-		led.red = 0;
-		led.green = 1;
-		led.put(false);
+	if(rpiSensor.temperature >= 25 && (rpiLed.green == 1 || rpiLed.red == 0)) {
+		rpiLed.red = 1;
+		rpiLed.green = 0;
+		rpiLed.put(false);
+	} else if(rpiSensor.temperature < 25 && (rpiLed.green == 0 || rpiLed.red == 1)) {
+		rpiLed.red = 0;
+		rpiLed.green = 1;
+		rpiLed.put(false);
 	}
 }
 
-bool rule2_condition(RpiSensorNode& sensor, RpiLedNode& led)
+bool rule2_condition()
 {
-	if(sensor.found() && led.found())
+	if(rpiSensor.found() && rpiLed.found())
 		return true;
 	else
 		return false;
 }
 
 bool rule2_init_done = false;
-void rule2_init(RpiSensorNode& sensor, RpiLedNode& led)
+void rule2_init()
 {
-	if(sensor.light >= 500)
-		led.blue = 0;
+	if(rpiSensor.light >= 500)
+		rpiLed.blue = 0;
 	else
-		led.blue = 1;
+		rpiLed.blue = 1;
 
-	led.put(false);
+	rpiLed.put(false);
 
 	rule2_init_done = true;
 }
 
-void rule2_loop(RpiSensorNode& sensor, RpiLedNode& led)
+void rule2_loop()
 {
-	if(sensor.light >= 500 && led.blue == 1) {
-		led.blue = 0;
-		led.put(false);
-	} else if(sensor.light < 500 && led.blue == 0) {
-		led.blue = 1;
-		led.put(false);
+	if(rpiSensor.light >= 500 && rpiLed.blue == 1) {
+		rpiLed.blue = 0;
+		rpiLed.put(false);
+	} else if(rpiSensor.light < 500 && rpiLed.blue == 0) {
+		rpiLed.blue = 1;
+		rpiLed.put(false);
 	}
 }
 
-bool rule3_condition(RpiSensorNode& sensor)
+bool rule3_condition()
 {
-	return sensor.found();
+	return rpiSensor.found();
 }
 
-void rule3(RpiSensorNode& sensor, InfluxDB& db)
+void rule3(InfluxDB& db)
 {
-	db.writeDB("fukuoka", "temperature", sensor.temperature);
-	db.writeDB("fukuoka", "humidity", sensor.humidity);
-	db.writeDB("fukuoka", "light", sensor.light);
-	db.writeDB("fukuoka", "sound", sensor.sound);
+	db.writeDB("fukuoka", "temperature", rpiSensor.temperature);
+	db.writeDB("fukuoka", "humidity", rpiSensor.humidity);
+	db.writeDB("fukuoka", "light", rpiSensor.light);
+	db.writeDB("fukuoka", "sound", rpiSensor.sound);
 }
 
-bool rule4_condition(LcdNode& lcd)
+bool rule4_condition()
 {
 	if(lcd.found())
 		return true;
@@ -602,13 +637,13 @@ bool rule4_condition(LcdNode& lcd)
 }
 
 bool rule4_init_done = false;
-void rule4_init(LcdNode& lcd)
+void rule4_init()
 {
 	lcd.put(false);
 	rule4_init_done = true;
 }
 
-void rule5_loop(ButtonNode& button)
+void rule5_loop()
 {
 	if(button.found() && !button.isObserved()) {
 		button.observe(false, true);
@@ -616,7 +651,7 @@ void rule5_loop(ButtonNode& button)
 }
 
 int rule6_button = 0;
-void rule6_loop(LcdNode& lcd, ButtonNode& button)
+void rule6_loop()
 {
 	if(rule4_init_done && button.found()) {
 		if(rule6_button != button.button) {
@@ -629,19 +664,6 @@ void rule6_loop(LcdNode& lcd, ButtonNode& button)
 	}
 }
 
-
-// Client
-RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
-RpiLedNode rpiLed("RPI2 LEDs", "grovepi.led");
-LcdNode lcd("RPI2 LCD", "grovepi.lcd");
-UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
-ButtonNode button("RPI2 button", "grovepi.button");
-
-// server
-RpiSensorResource gwSensor("", "Gateway sensors", "/gateway/sensorp", "gateway.sensorp", false);
-RpiLedResource gwLed("", "Gateway LEDs", "/gateway/ledp", "gateway.ledp", false);
-LcdResource gwLcd("", "Gateway LCD", "/gateway/lcdp", "gateway.lcdp", false, 2, 16);
-ButtonResource gwButton("", "Gateway button", "/gateway/buttonp", "gateway.buttonp", false);
 
 
 
@@ -757,43 +779,38 @@ int main(int argc, char* argv[])
 		cout << "Run all rules" << endl;
 
 		while(true) {
-			// Get sensor data if sensors are found
-			if(rpiSensor.found())
-				rpiSensor.get(false);
-
-			if(ultrasonic.found())
-				ultrasonic.get(false);
-
-
 			// All rules
-			if(rule1_condition(rpiSensor, rpiLed)) {
+			rule0_loop();
+
+			if(rule1_condition()) {
 				if(rule1_init_done) {
-					rule1_loop(rpiSensor, rpiLed);
+					rule1_loop();
 				} else {
-					rule1_init(rpiSensor, rpiLed);
+					rule1_init();
 				}
 			}
 
-			if(rule2_condition(rpiSensor, rpiLed)) {
+			if(rule2_condition()) {
 				if(rule2_init_done) {
-					rule2_loop(rpiSensor, rpiLed);
+					rule2_loop();
 				} else {
-					rule2_init(rpiSensor, rpiLed);
+					rule2_init();
 				}
 			}
 
-			if(rule3_condition(rpiSensor)) {
-				rule3(rpiSensor, db);
+			if(rule3_condition()) {
+				rule3(db);
 			}
 
-			if(rule4_condition(lcd)) {
+			if(rule4_condition()) {
 				if(!rule4_init_done) {
-					rule4_init(lcd);
+					rule4_init();
 				}
 			}
 
-			rule5_loop(button);
-			rule6_loop(lcd, button);
+			rule5_loop();
+
+			rule6_loop();
 
 			sleep(1);
 		}
