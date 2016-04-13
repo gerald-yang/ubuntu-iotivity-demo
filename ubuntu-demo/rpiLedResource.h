@@ -6,27 +6,28 @@
 //
 //******************************************************************
 
-#ifndef LEDRESOURCE_H
-#define LEDRESOURCE_H
+#ifndef RPILEDRESOURCE_H
+#define RPILEDRESOURCE_H
 
 #include "baseResource.h"
 
-class LedResource : public BaseResource
+class RpiLedResource : public BaseResource
 {
 public:
-	LedResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure, int _low, int _high) 
+	RpiLedResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure) 
 		: BaseResource(_uniqueID, _resourceName, _resourceUri, _resourceTypeName, _isSecure)
 	{
-		low = _low;
-		high = _high;
-		status = 0;
+		red = 0;
+		green = 0;
+		blue = 0;
 	};
 
 	void get();
 	void put(OCRepresentation& recv_rep);
-	int low;
-	int high;
-	int status;
+	bool observeNeedNotification();
+	int red;
+	int green;
+	int blue;
 };
 
 #endif

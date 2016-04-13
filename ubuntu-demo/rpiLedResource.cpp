@@ -6,10 +6,9 @@
 //
 //******************************************************************
 
-#include "grovepiLedResource.h"
+#include "rpiLedResource.h"
 
-
-void GrovepiLedResource::get()
+void RpiLedResource::get()
 {
 	debugPrint({"in GET"});
 
@@ -18,7 +17,7 @@ void GrovepiLedResource::get()
 	rep.setValue("blue", blue);
 }
 
-void GrovepiLedResource::put(OCRepresentation& recv_rep)
+void RpiLedResource::put(OCRepresentation& recv_rep)
 {
 	debugPrint({"in PUT"});
 
@@ -26,17 +25,12 @@ void GrovepiLedResource::put(OCRepresentation& recv_rep)
 	recv_rep.getValue("green", green);
 	recv_rep.getValue("blue", blue);
 
-	debugPrint({"Red LED: ", to_string(red)});
-	debugPrint({"Green LED: ", to_string(green)});
-	debugPrint({"Blue LED: ", to_string(blue)});
-
-	server_write("led_write_red", red);
-	server_write("led_write_green", green);
-	server_write("led_write_blue", blue);
+	return;
 }
 
-bool GrovepiLedResource::observeNeedNotification()
+bool RpiLedResource::observeNeedNotification()
 {
 	cout << debugInfo << "Un-supported request OBSERVE" << endl;
 	return false;
 }
+

@@ -7,6 +7,7 @@
 //******************************************************************
 
 #include <string>
+#include <thread>
 #include <condition_variable>
 
 #include <unistd.h>
@@ -27,6 +28,10 @@
 #include "lcdNode.h"
 #include "ultrasonicNode.h"
 #include "buttonNode.h"
+#include "rpiSensorResource.h"
+#include "rpiLedResource.h"
+#include "lcdResource.h"
+#include "buttonResource.h"
 
 using namespace std;
 using namespace OC;
@@ -603,12 +608,19 @@ void rule4_init(LcdNode& lcd)
 	rule4_init_done = true;
 }
 
-int rule5_button = 0;
-void rule5_loop(LcdNode& lcd, ButtonNode& button)
+void rule5_loop(ButtonNode& button)
+{
+	if(button.found() && !button.isObserved()) {
+		button.observe(false, true);
+	}
+}
+
+int rule6_button = 0;
+void rule6_loop(LcdNode& lcd, ButtonNode& button)
 {
 	if(rule4_init_done && button.found()) {
-		if(rule5_button != button.button) {
-			rule5_button = button.button;
+		if(rule6_button != button.button) {
+			rule6_button = button.button;
 			lcd.lcd.resize(16, ' ');
 			lcd.lcd += "button: ";
 			lcd.lcd += to_string(button.button);
@@ -620,14 +632,39 @@ void rule5_loop(LcdNode& lcd, ButtonNode& button)
 
 // Client
 RpiSensorNode rpiSensor("RPI2 sensors", "grovepi.sensor");
-RpiLedNode led("RPI2 LEDs", "grovepi.led");
+RpiLedNode rpiLed("RPI2 LEDs", "grovepi.led");
 LcdNode lcd("RPI2 LCD", "grovepi.lcd");
 UltrasonicNode ultrasonic("RPI2 ultrasonic sensor", "grovepi.ultrasonic");
 ButtonNode button("RPI2 button", "grovepi.button");
 
 // server
+RpiSensorResource gwSensor("", "Gateway sensors", "/gateway/sensorp", "gateway.sensorp", false);
+RpiLedResource gwLed("", "Gateway LEDs", "/gateway/ledp", "gateway.ledp", false);
+LcdResource gwLcd("", "Gateway LCD", "/gateway/lcdp", "gateway.lcdp", false, 2, 16);
+ButtonResource gwButton("", "Gateway button", "/gateway/buttonp", "gateway.buttonp", false);
 
 
+
+void startServer()
+{
+	while(!gwSensor.isCreated() || !gwLed.isCreated() || !gwLcd.isCreated() || !gwButton.isCreated()) {
+		if(rpiSensor.found() && !gwSensor.isCreated()) {
+			gwSensor.createResource();
+		}
+
+		if(rpiLed.found() && !gwLed.isCreated()) {
+			gwLed.createResource();
+		}
+
+		if(rpiLed.found() && !gwLcd.isCreated()) {
+			gwLcd.createResource();
+		}
+
+		if(button.found() && !gwButton.isCreated()) {
+			//gwButton.createResource();
+		}
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -684,10 +721,10 @@ int main(int argc, char* argv[])
 	cout << "done" << endl;
 
 
-	cout << "Starting client" << endl;
+	cout << "Starting client ... ";
 
 	rpiSensor.startFindResource();
-	led.startFindResource();
+	rpiLed.startFindResource();
 	lcd.startFindResource();
 	ultrasonic.startFindResource();
 	button.startFindResource();
@@ -695,10 +732,15 @@ int main(int argc, char* argv[])
 	lcd.lcd = host_ip;
 	lcd.lcd.resize(16, ' ');
 	lcd.lcd += "button: ";
-	lcd.lcd += to_string(rule5_button);
+	lcd.lcd += to_string(rule6_button);
 
-	button.observe(true, true);
-	rule5_button = button.button;
+	rule6_button = button.button;
+
+	cout << "done" << endl;
+
+	cout << "Starting server ... ";
+	thread serverThread(startServer);
+	cout << "done" << endl;
 
 	// Main loop
 	if(debug_mode) {
@@ -724,19 +766,19 @@ int main(int argc, char* argv[])
 
 
 			// All rules
-			if(rule1_condition(rpiSensor, led)) {
+			if(rule1_condition(rpiSensor, rpiLed)) {
 				if(rule1_init_done) {
-					rule1_loop(rpiSensor, led);
+					rule1_loop(rpiSensor, rpiLed);
 				} else {
-					rule1_init(rpiSensor, led);
+					rule1_init(rpiSensor, rpiLed);
 				}
 			}
 
-			if(rule2_condition(rpiSensor, led)) {
+			if(rule2_condition(rpiSensor, rpiLed)) {
 				if(rule2_init_done) {
-					rule2_loop(rpiSensor, led);
+					rule2_loop(rpiSensor, rpiLed);
 				} else {
-					rule2_init(rpiSensor, led);
+					rule2_init(rpiSensor, rpiLed);
 				}
 			}
 
@@ -750,7 +792,8 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			rule5_loop(lcd, button);
+			rule5_loop(button);
+			rule6_loop(lcd, button);
 
 			sleep(1);
 		}

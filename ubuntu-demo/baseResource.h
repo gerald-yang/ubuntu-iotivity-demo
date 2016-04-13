@@ -31,6 +31,7 @@ public:
 	BaseResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure);
 
 	void createResource();
+	bool isCreated();
 	virtual void put(OCRepresentation&) = 0;
 	virtual void get() = 0;
 	virtual bool observeNeedNotification() = 0;

@@ -35,6 +35,7 @@ public:
 	void debugPrint(initializer_list <string> list);
 	void startFindResource();
 	bool found();
+	bool isObserved();
 
 	void get(bool wait);
 	void put(bool wait);

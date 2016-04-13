@@ -17,11 +17,14 @@ public:
 	ButtonResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure) 
 		: SensorResource(_uniqueID, _resourceName, _resourceUri, _resourceTypeName, _isSecure) 
 	{
-		status = 0;
+		button = 0;
+		buttonPrev = 0;
 	};
 
 	void get();
-	int status;
+	bool observeNeedNotification();
+	int button;
+	int buttonPrev;
 };
 
 #endif

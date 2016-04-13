@@ -68,6 +68,11 @@ bool BaseNode::found()
 		return false;
 }
 
+bool BaseNode::isObserved()
+{
+	return inObserve;
+}
+
 void BaseNode::get(bool wait)
 {
 	if(getEnable()) {

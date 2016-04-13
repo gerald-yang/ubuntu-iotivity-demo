@@ -11,8 +11,9 @@
 
 BaseResource::BaseResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure)
 {
-	uniqueID = _uniqueID;
+	resourceHandle = NULL;
 
+	uniqueID = _uniqueID;
 	resourceName = _resourceName;
 	resourceUri = _resourceUri + uniqueID;
 	resourceTypeName = _resourceTypeName;
@@ -56,6 +57,14 @@ void BaseResource::createResource()
 	if (OC_STACK_OK != result) {
 		cout << debugInfo << "Resource creation was unsuccessful" << endl;
 	}
+}
+
+bool BaseResource::isCreated()
+{
+	if(resourceHandle)
+		return true;
+	else
+		return false;
 }
 
 void BaseResource::observeFunc()

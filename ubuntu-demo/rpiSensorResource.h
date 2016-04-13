@@ -6,28 +6,30 @@
 //
 //******************************************************************
 
-#ifndef LCDRESOURCE_H
-#define LCDRESOURCE_H
+#ifndef RPISENSORRESOURCE_H
+#define RPISENSORRESOURCE_H
 
 #include "baseResource.h"
 
-class LcdResource : public BaseResource
+class RpiSensorResource : public BaseResource
 {
 public:
-	LcdResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure, int _row, int _column) 
+	RpiSensorResource(string _uniqueID, string _resourceName, string _resourceUri, string _resourceTypeName, bool _isSecure) 
 		: BaseResource(_uniqueID, _resourceName, _resourceUri, _resourceTypeName, _isSecure)
 	{
-		row = _row;
-		column = _column;
-		str.clear();
+		temperature = 0.0;
+		humidity = 0.0;
+		light = 0;
+		sound = 0;
 	};
 
 	void get();
 	void put(OCRepresentation& recv_rep);
 	bool observeNeedNotification();
-	int row;
-	int column;
-	string str;
+	double temperature;
+	double humidity;
+	int light;
+	int sound;
 };
 
 #endif

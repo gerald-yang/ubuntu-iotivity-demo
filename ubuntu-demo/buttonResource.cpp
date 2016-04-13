@@ -11,7 +11,18 @@
 void ButtonResource::get()
 {
 	debugPrint({"in GET"});
-	debugPrint({"status: ", to_string(status)});
-	rep.setValue("status", status);
+	debugPrint({"button: ", to_string(button)});
+	rep.setValue("button", button);
 }
 
+bool ButtonResource::observeNeedNotification(void)
+{
+	rep.getValue("button", button);
+
+	if(button != buttonPrev) {
+		buttonPrev = button;
+		return true;
+	} else {
+		return false;
+	}
+}

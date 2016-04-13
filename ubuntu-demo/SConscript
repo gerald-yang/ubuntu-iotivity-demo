@@ -76,7 +76,7 @@ if target_os in ['darwin', 'ios']:
 # Source files and Targets
 ######################################################################
 demogateway = demo_env.Program('demogateway', ['demoGateway.cpp', 
-'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'ledResource.cpp', 
+'baseResource.cpp', 'sensorResource.cpp', 'cpuTempResource.cpp', 'rpiSensorResource.cpp', 'rpiLedResource.cpp', 
 'lcdResource.cpp', 'buttonResource.cpp', 'baseNode.cpp', 'sensorNode.cpp', 'rpiSensorNode.cpp', 
 'rpiLedNode.cpp', 'lcdNode.cpp', 'buzzerNode.cpp', 'buttonNode.cpp', 'ultrasonicNode.cpp', 'influxDB.cpp'])
 

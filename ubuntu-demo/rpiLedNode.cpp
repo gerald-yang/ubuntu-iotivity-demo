@@ -10,12 +10,23 @@
 
 bool RpiLedNode::getEnable()
 {
-	return false;
+	return true;
 }
 
 bool RpiLedNode::putEnable()
 {
 	return true;
+}
+
+void RpiLedNode::getDataFromRep(const OCRepresentation& rep)
+{
+	rep.getValue("red", red);
+	rep.getValue("green", green);
+	rep.getValue("blue", blue);
+	
+	debugPrint({"red: ", to_string(red)});
+	debugPrint({"green: ", to_string(green)});
+	debugPrint({"blue: ", to_string(blue)});
 }
 
 void RpiLedNode::putDataToRep(OCRepresentation& rep)

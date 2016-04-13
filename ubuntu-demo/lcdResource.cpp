@@ -11,7 +11,11 @@
 void LcdResource::put(OCRepresentation& recv_rep)
 {
 	cout << debugInfo << "in PUT" << endl;
-	recv_rep.getValue("str", str);
+	if(str.size() >= (unsigned int)(row * column)) {
+		cout << debugInfo << "Error: LCD string size " << to_string(str.size()) << " out of range " << str << endl;
+	} else {
+		recv_rep.getValue("str", str);
+	}
 }
 
 void LcdResource::get()
@@ -20,3 +24,10 @@ void LcdResource::get()
 	debugPrint({"string: ", str});
 	rep.setValue("str", str);
 }
+
+bool LcdResource::observeNeedNotification()
+{
+	cout << debugInfo << "Un-supported request OBSERVE" << endl;
+	return false;
+}
+

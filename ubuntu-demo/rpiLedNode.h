@@ -24,6 +24,7 @@ public:
 
 	bool getEnable();
 	bool putEnable();
+	void getDataFromRep(const OCRepresentation& rep);
 	void putDataToRep(OCRepresentation& rep);
 
 	int red;
